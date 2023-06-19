@@ -1,0 +1,13 @@
+# Folders
+.vscode/
+config/
+data/
+logs/
+scripts/
+src/__pycache__
+tutorials
+venv/
+
+# files
+*.DS_Store
+*.cache*
