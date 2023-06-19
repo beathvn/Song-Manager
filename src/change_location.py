@@ -35,4 +35,4 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--save_location', default='')
 
     args = parser.parse_args()
-    main()
+    main(args)
