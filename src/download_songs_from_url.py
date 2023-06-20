@@ -49,7 +49,7 @@ def main(args):
     songs = [i + ' -q' for i in songs]
 
     songs = dataprocessing.adding_pre_and_post_str(
-        'ytmdl', '--output-dir ' + args.output-dir, songs)
+        'ytmdl', '--output-dir ' + args.output_dir, songs)
 
     # passing the commands to the command line
     for song in songs:
@@ -58,7 +58,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-o', '--output-dir')
+    parser.add_argument('-o', '--output_dir')
     parser.add_argument('-l', '--urllist')
     parser.add_argument('-u', '--user')
     parser.add_argument('-p', '--playlist')
