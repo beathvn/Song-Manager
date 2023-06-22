@@ -18,6 +18,8 @@ import dataprocessing
 
 
 def main(args):
+    config = dataloading.load_yaml(args.configfile)
+
     # getting the environmental variables
     client_id = os.environ.get('SPOTIPY_CLIENT_ID')
     client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
@@ -33,11 +35,11 @@ def main(args):
 
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-    songs = dataloading.get_txt_lines_as_list(args.urllist)
+    songs = dataloading.get_txt_lines_as_list(config['urllist'])
 
     # adding the spotify uris
     playlist_tracks = sp.user_playlist_tracks(
-        args.user, playlist_id=args.playlist)['items']
+        config['username'], playlist_id=config['playlist'])['items']
 
     songs = [x + ' --spotify-id ' + y['track']['uri']
              for x, y in zip(songs, playlist_tracks)]
@@ -49,7 +51,7 @@ def main(args):
     songs = [i + ' -q' for i in songs]
 
     songs = dataprocessing.adding_pre_and_post_str(
-        'ytmdl', '--output-dir ' + args.output_dir, songs)
+        'ytmdl', '--output-dir ' + config['output_dir'], songs)
 
     # passing the commands to the command line
     for song in songs:
@@ -58,10 +60,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-o', '--output_dir')
-    parser.add_argument('-l', '--urllist')
-    parser.add_argument('-u', '--user')
-    parser.add_argument('-p', '--playlist')
+    parser.add_argument('-c', '--config')
 
     args = parser.parse_args()
     main(args)

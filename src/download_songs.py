@@ -14,6 +14,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 # user imports
 import dataprocessing
+import dataloading
 
 
 def list_songs_from_spotify_playlist(sp, user, playlist):
@@ -33,6 +34,8 @@ def list_songs_from_spotify_playlist(sp, user, playlist):
 
 
 def main(args):
+    config = dataloading.load_yaml(args.configfile)
+
     # getting the environmental variables
     client_id = os.environ.get('SPOTIPY_CLIENT_ID')
     client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
@@ -49,7 +52,7 @@ def main(args):
 
     # since the ytmdl is just a command line tool, we need to call it in the shell
     songs = list_songs_from_spotify_playlist(sp=sp,
-                                      playlist=args.playlist, user=args.user)
+                                      playlist=config['playlist'], user=config['username'])
     
     songs = dataprocessing.remove_illegal_characters(songs)
 
@@ -57,7 +60,7 @@ def main(args):
     songs = [i + ' --nolocal' for i in songs]
 
     songs = dataprocessing.adding_pre_and_post_str(
-        'ytmdl', '--output-dir ' + args.output_dir, songs)
+        'ytmdl', '--output-dir ' + config['output_dir'], songs)
 
     for song in songs:
         os.system(song)
@@ -65,8 +68,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-o', '--output_dir')
-    parser.add_argument('-u', '--user')
-    parser.add_argument('-p', '--playlist')
+    parser.add_argument('-c', '--config')
     args = parser.parse_args()
     main(args)

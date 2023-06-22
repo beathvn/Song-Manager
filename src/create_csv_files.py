@@ -17,9 +17,9 @@ import datastoring
 
 def main(args):
     ################## READING CONFIGURATION ##################
-    username = args.username
-    data_path = args.datapath
     config = dataloading.load_yaml(args.configfile)
+    username = config['username']
+    data_path = config['datapath']
     
     # getting the environmental variables
     client_id = os.environ.get('SPOTIPY_CLIENT_ID')
@@ -69,9 +69,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-u', '--username')
-    parser.add_argument('-d', '--datapath')
-    parser.add_argument('-p', '--playlistIDs')
     parser.add_argument('-c', '--configfile')
     
     args = parser.parse_args()
