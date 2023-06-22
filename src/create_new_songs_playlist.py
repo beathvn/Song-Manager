@@ -9,6 +9,7 @@ import os
 import pandas as pd
 import spotipy
 import spotipy.util as util
+import numpy as np
 
 # user imports
 import dataloading
@@ -62,12 +63,16 @@ def create_playlist_of_songlist(sp: spotipy.Spotify, username: str, playlist_nam
         playlist_name (str): name of the playlist
         song_list (list): uri list of the songs you want to add to the playlist
     """
-    # TODO: you can only add 100 songs at a time to a playlist. If there are more songs in the song_list, this will fail.
     # creating the playlist
     playlist_id = sp.user_playlist_create(user=username, name=playlist_name, public=True)['id']
 
-    # adding songs to playlist
-    sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=song_list)
+    # you can just add 100 tracks at a time
+    max_len = 100
+    if len(song_list) > max_len:
+        for i in range((len(song_list) + max_len - 1) // max_len):
+            sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=song_list[i*max_len:(i+1)*max_len])
+    else:
+        sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=song_list)
 
     return
 
