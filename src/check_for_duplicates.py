@@ -1,6 +1,7 @@
 # This script checks for duplicates in your rekordbox xml file.
 # Pass the path to your rekordbox.xml file as a program argument with the -p flag.
 
+
 # system imports
 from argparse import ArgumentParser
 

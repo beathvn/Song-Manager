@@ -4,6 +4,7 @@
 # as the playlist provided in the -p flag.
 # The provided playlist should be a playlist of the user provided in the -u flag.
 
+
 # system imports
 from argparse import ArgumentParser
 import os

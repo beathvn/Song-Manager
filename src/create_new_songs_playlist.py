@@ -1,5 +1,6 @@
 # This script creates a playlist of the new songs added to the playlists and new songs from favourite artists.
 
+
 # system imports
 from argparse import ArgumentParser
 from datetime import datetime
@@ -9,7 +10,6 @@ import os
 import pandas as pd
 import spotipy
 import spotipy.util as util
-import numpy as np
 
 # user imports
 import dataloading

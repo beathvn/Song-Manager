@@ -1,12 +1,11 @@
 # This scripts holds different functions to help processing different data
 
+
 # 3rd party imports
 import pandas as pd
 
 # user imports
 from logger import logger
-
-
 
 
 def adding_pre_and_post_str(pre: str, post: str, my_list: list)-> list:

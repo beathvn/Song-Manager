@@ -1,6 +1,7 @@
 # Script to create csv files for liked tracks, tracks in specified playlists and tracks of selected artists.
 # The script fetches the data from spotify
 
+
 # system imports
 from argparse import ArgumentParser
 from datetime import datetime

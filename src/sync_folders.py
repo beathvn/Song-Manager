@@ -1,6 +1,7 @@
 # This script syncs folders given as arguments using rsync.
 # Updating a Versions.txt file with a row containing "Music Collection" Key word
 
+
 # system imports
 from argparse import ArgumentParser
 import os
