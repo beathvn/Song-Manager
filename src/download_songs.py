@@ -35,7 +35,7 @@ def list_songs_from_spotify_playlist(sp, user, playlist):
 
 
 def main(args):
-    config = dataloading.load_yaml(args.configfile)
+    config = dataloading.load_yaml(args.config)
 
     # getting the environmental variables
     client_id = os.environ.get('SPOTIPY_CLIENT_ID')
