@@ -9,6 +9,8 @@ This project provides the following main funcionalities:
     1. changing the location of an "old" to a "new location" by overwriting the "@Location" key in the xml file
     2. converting some provided keys from an rekordbox 5 xml file to a rekordbox 6 xml file
     3. Searching for duplicates in the rekordbox xml "@Location" key
+    4. Comparing two xml files to find differences, based on some set rules it looks for.
+5. Normalizing audio using pydub.
 
 ## Getting started
 Before you start, there is a few things you need to setup:
@@ -36,9 +38,13 @@ For Song downloading use the scripts **download_songs.py** or **download_songs_f
 Simply execute the **sync_folders.py** script with the program arguments you want to have. For more information see the first few rows on the source file.
 
 ### Rekordbox
-* The **change_location.py** script lets you change all the "@Location" information of a rekordbox xml file from an "old location" to a "new location". Why would you need this feature: Imagine, you have an different laptop for your dj sets (2nd laptop) than for the track preparation and stick syncing (1st laptop). The most up-to-date colleciton is found on the 1st laptop. So you can export the rekordbox xml file there and import it in the 2nd laptop. For this import to work, you need the "@Locaiton" key of the songs to be correct, otherwise rekordbox simply tells you that it couldn't import the songs, because they are not found.
+* The **change_location.py** script lets you change all the "@Location" information of a rekordbox xml file from an "old location" to a "new location". Why would you need this feature? Imagine, you have an different laptop for your dj sets (2nd laptop) than for the track preparation and stick syncing (1st laptop). The most up-to-date colleciton is found on the 1st laptop. So you can export the rekordbox xml file there and import it in the 2nd laptop. For this import to work, you need the "@Locaiton" key of the songs to be correct, otherwise rekordbox simply tells you that it couldn't import the songs, because they are not found.
 * The **convert_rb5_to_rb6.py** script lets you update some defined keys in a rekordbox 6 xml file on the base of the rekordbox 5 xml file. The script uses the classes defined in **RB_handler.py** script under the hood, to perform the conversion.
 * The **check_for_duplicates.py** script searches the "@Location" key of a rekordbox xml file to find duplicates.
+* The **diff_xml.py** script compares two given xml files ("old" and "new") by looking at specific keys in the xml files. The newly added songs are currently not considered a difference. This script serves the purpose to find the songs the "new" xml file has changed in comparison to the old (such as the rating and so on).
+
+### Normalize Audio
+Execute the **normalize_audio.py** script to normalize the audio files using pydub (https://github.com/jiaaro/pydub) found in folder A and save the normalized audio files in folder B. Both folder A and B are given to the program via program argument.
 
 # Disclaimer
 This project is provided "as is", without express or implied warranties of any kind. The author assumes no responsibility or liability for the use of this project or for the accuracy, reliability, or timeliness of the information contained herein. Any actions taken based on this project or the information provided therein are done so at the user's own risk.
