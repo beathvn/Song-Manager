@@ -10,6 +10,7 @@ import subprocess
 from datetime import datetime
 
 # 3rd party imports
+from dirsync import sync
 from colorama import Fore, Style
 
 # user imports
@@ -70,100 +71,13 @@ def contains_illegal_characters(text):
     return result
 
 
-def sync_folders(master_folder: str, slave_folder: str, logger):
-    """
-    Synchronize folders from the master folder to the slave folder using rsync.
-
-    Args:
-        master_folder (str): Path to the master folder.
-        slave_folder (str): Path to the slave folder.
-        logger: Logger object used for logging information.
-
-    Returns:
-        None
-    """
-    print(f"Syncing folders from {master_folder} to {slave_folder}")
-    logger.info(f"Syncing folders from {master_folder} to {slave_folder}")
-
-    # ---------------------------- check for illegal characters ----------------------------
-    # Check if the master folder holds any characters causing problems when syncing
-
-    print(f'Checking for illegal characters in {master_folder}')
-    logger.info(f'Checking for illegal characters in {master_folder}')
-
-    files = [f for f in os.listdir(master_folder) if os.path.isfile(
-        os.path.join(master_folder, f)) and not f.startswith('.')]
-
-    illegal_files = []
-
-    for file in files:
-        if contains_illegal_characters(file):
-            illegal_files.append(file)
-    if len(illegal_files) != 0:
-        print(
-            Fore.RED + f'Found illegal characters in {master_folder}! ABORTING!' + Style.RESET_ALL)
-        logger.error(f'Found illegal characters in {master_folder}! ABORTING!')
-        raise ValueError(
-            'Master folder contains files with illegal characters: ' + str(illegal_files))
-    else:
-        print(Fore.GREEN +
-              f'No illegal characters found in {master_folder}. Continuing' + Style.RESET_ALL)
-        logger.info(
-            f'No illegal characters found in {master_folder}. Continuing...')
-
-    # ---------------------------- sync folders ----------------------------
-    command = ["rsync", "-av", "--delete",
-               "--stats", master_folder + "/", slave_folder, "--exclude", ".*"]
-
-    output = subprocess.check_output(command, universal_newlines=True)
-
-    # Extract copied file count
-    copied_files_cnt = int(output.split(
-        "Number of files transferred: ")[1].split()[0])
-
-    if copied_files_cnt > 0:
-        print("Copied files: " + Fore.GREEN
-              + f"{copied_files_cnt}" + Style.RESET_ALL)
-        logger.info(f"Copied files: {copied_files_cnt}")
-
-        copied_files = output.split(
-            './')[1].split('\n', copied_files_cnt+1)[1:-1]
-
-        for file in copied_files:
-            print(f"Copied file:\t\t " + Fore.GREEN +
-                  f"{file:<30}" + Style.RESET_ALL)
-            logger.info(f"Copied file:\t\t {file:<30}")
-    else:
-        logger.info("No files copied!")
-        print("No files copied!")
-
-    # Extract deleted file list
-    deleted_files = [
-        line.split(None, 1)[-1].strip() for line in output.splitlines() if line.startswith("deleting")
-    ]
-
-    if len(deleted_files) > 0:
-        print(f"Deleted files: " + Fore.RED +
-              f"{len(deleted_files)}" + Style.RESET_ALL)
-        logger.warning(f"Deleted files: {len(deleted_files)}")
-        for file in deleted_files:
-            print(f"Deleted file:\t\t " + Fore.RED +
-                  f"{file:<30}" + Style.RESET_ALL)
-            logger.warning(f"Deleted file:\t\t {file:<30}")
-    else:
-        logger.info("No files deleted!")
-        print("No files deleted!")
-
-    print("Sync completed!")
-    logger.info("Sync completed!")
-    return
+def sync_folders(master_folder: str, slave_folder: str):
+    filenames_to_exclude = [filename for filename in os.listdir(master_folder) if filename.startswith('.')]
+    sync(master_folder, slave_folder, 'sync', verbose=True, exclude=filenames_to_exclude, logger=logger, purge=True)
 
 
-def main(args):
-    sync_folders(master_folder=args.master_folder,
-                 slave_folder=args.slave_folder,
-                 logger=logger,
-                 )
+def main(args):    
+    sync_folders(args.master_folder, args.slave_folder)
 
     if args.master_folder.endswith('Music Collection'):
         update_versions_txt(version_file=os.path.join(
