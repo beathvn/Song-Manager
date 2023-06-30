@@ -17,7 +17,7 @@ from pydub.utils import mediainfo
 from tqdm import tqdm
 
 # user imports
-from logger import logger
+from helpers.logger import logger
 
 
 def main(args):

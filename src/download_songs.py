@@ -14,8 +14,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 # user imports
-import dataprocessing
-import dataloading
+import helpers.dataprocessing as dataprocessing
+import helpers.dataloading as dataloading
 
 
 def list_songs_from_spotify_playlist(sp, user, playlist):

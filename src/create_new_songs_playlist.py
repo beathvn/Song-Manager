@@ -12,9 +12,9 @@ import spotipy
 import spotipy.util as util
 
 # user imports
-import dataloading
-import dataprocessing
-from logger import logger
+import helpers.dataloading as dataloading
+import helpers.dataprocessing as dataprocessing
+from helpers.logger import logger
 
 
 def get_new_arrival_song_list_and_limit(data_path: str, dict_playlist_limits: dict, dict_uri_to_name: dict)-> list:

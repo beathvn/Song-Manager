@@ -5,7 +5,7 @@
 import pandas as pd
 
 # user imports
-from logger import logger
+from helpers.logger import logger
 
 
 def adding_pre_and_post_str(pre: str, post: str, my_list: list)-> list:

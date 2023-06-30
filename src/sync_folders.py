@@ -14,7 +14,7 @@ from dirsync import sync
 from colorama import Fore, Style
 
 # user imports
-from logger import logger
+from helpers.logger import logger
 
 
 def update_versions_txt(version_file: str, folder_name: str) -> None:

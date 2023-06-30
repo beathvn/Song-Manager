@@ -11,7 +11,7 @@ import spotipy
 import xmltodict
 
 # user imports
-import dataprocessing
+import helpers.dataprocessing as dataprocessing
 
 
 def load_yaml(filepath: str):

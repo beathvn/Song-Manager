@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 
 # user imports
-from RB_handler import RB_handler_five_six
+from helpers.RB_handler import RB_handler_five_six
 
 
 def main(args):

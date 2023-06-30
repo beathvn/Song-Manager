@@ -12,8 +12,8 @@ import spotipy
 import spotipy.util as util
 
 # user imports
-import dataloading
-import datastoring
+import helpers.dataloading as dataloading
+import helpers.datastoring as datastoring
 
 
 def main(args):

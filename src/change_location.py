@@ -9,7 +9,7 @@
 from argparse import ArgumentParser
 
 # user imports
-from RB_handler import RB_handler
+from helpers.RB_handler import RB_handler
 
 
 def main(args):

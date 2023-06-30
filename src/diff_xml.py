@@ -16,33 +16,29 @@ sys.path.append('../src/')
 import pandas as pd
 
 # user imports
-import dataloading
-from logger import logger
-import utils
+import helpers.dataloading as dataloading
+from helpers.logger import logger
+import helpers.utils as utils
 
 
 def main(args):    
     config = dataloading.load_yaml(args.config)
     datapath = config['datapath']
 
-    files = [f for f in os.listdir(datapath) if os.path.isfile(os.path.join(datapath, f)) and not f.startswith('.') and f.startswith('rekordbox')]
-    files.sort()
-    new_filename = files[-1]
-    new_file = dataloading.load_dataframe_from_rekordbox_xml(os.path.join(datapath, new_filename))
+    new_file = dataloading.load_dataframe_from_rekordbox_xml(os.path.join(datapath, config['new_xml_file']))
     old_file = dataloading.load_dataframe_from_rekordbox_xml(os.path.join(datapath, config['old_xml_file']))
-
-    logger.info(f'As newest xml file, i am using the following file: {new_filename}')
 
     columns_to_consider = config['columns_to_consider']
     new_file = new_file[columns_to_consider]
     old_file = old_file[columns_to_consider]
+    
+    new_file = new_file[new_file['@Location'].str.startswith(config['location_to_consider'])]
+    newest_date_to_keep = old_file.sort_values(by='@DateAdded', ascending=False)['@DateAdded'].iloc[0]
+    new_file = new_file[new_file['@DateAdded'] <= newest_date_to_keep]
 
     df_changed = pd.concat([new_file, old_file], axis=0).drop_duplicates(keep=False)
-    df_changed = df_changed[df_changed['@DateAdded'] != new_filename[11:-4]]
-    df_changed = df_changed[df_changed['@Location'].str.startswith(config['location_to_consider'])]
     df_changed.drop_duplicates(subset=['@Location'], keep='first', inplace=True)
     df_changed = df_changed.sort_values(by='@Name', inplace=False).reset_index(drop=True)
-    df_changed
     logger.info(f'Found {len(df_changed)} changes (excluding the ones, that are simply new, or not in Music Collection)')
 
     # now write the files to a file using the logger

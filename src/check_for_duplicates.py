@@ -6,8 +6,8 @@
 from argparse import ArgumentParser
 
 # user imports
-import dataloading
-import utils
+import helpers.dataloading as dataloading
+import helpers.utils as utils
 
 
 def main(args):
