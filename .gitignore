@@ -4,7 +4,7 @@ config/
 data/
 logs/
 scripts/
-src/__pycache__
+*__pycache__
 tutorials
 venv/
 
