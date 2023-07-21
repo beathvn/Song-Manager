@@ -129,9 +129,11 @@ def limit_df_count(df:pd.DataFrame, dict_playlist_limits: dict, dict_uri_to_name
         if len_full > len_allowed:
             sub_dfs.append(curr_df[:len_allowed])
             logger.warn(f'{len_full} new songs found in \t{dict_uri_to_name[curr_playlist]},\tbut added just {len_allowed} due to limitation.')
-        else:
+        elif len_full > 0:
             logger.info(f'{len_full} new songs found in \t{dict_uri_to_name[curr_playlist]},\tadded ALL')
             sub_dfs.append(curr_df)
+        else:
+            logger.info(f'No new songs found in \t{dict_uri_to_name[curr_playlist]}')
 
     df_thin = pd.concat(sub_dfs)
     df_thin.reset_index(inplace=True, drop=True)

@@ -8,9 +8,11 @@ from argparse import ArgumentParser
 # user imports
 import helpers.dataloading as dataloading
 import helpers.utils as utils
+from logger import logger
 
 
 def main(args):
+    logger.info('Start of program: check_for_duplicates.py...')
     filepath = args.path_to_xml
 
     if filepath is None:
@@ -29,14 +31,14 @@ def main(args):
             duplicate_songnames.append(data.iloc[index]['@Name'])
 
     if len(duplicate_songnames) != 0:
-        print(
+        logger.warn(
             f'🚨 {len(duplicate_songnames)} TRACKS WHERE FOUND pointing to the same file on your harddisk:')
-        utils.print_divider()
         for currsong in duplicate_songnames:
-            print('- ' + currsong)
-        utils.print_divider()
+            logger.warn('- ' + currsong)
     else:
-        print('✅ No songs appearing more than once were found.')
+        logger.info('✅ No songs appearing more than once were found.')
+    
+    logger.info('End of program: check_for_duplicates.py\n')
 
 
 if __name__ == "__main__":

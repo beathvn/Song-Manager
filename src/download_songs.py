@@ -16,6 +16,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 # user imports
 import helpers.dataprocessing as dataprocessing
 import helpers.dataloading as dataloading
+from helpers.logger import logger
+import helpers.utils as utils
 
 
 def list_songs_from_spotify_playlist(sp, user, playlist):
@@ -35,21 +37,11 @@ def list_songs_from_spotify_playlist(sp, user, playlist):
 
 
 def main(args):
+    logger.info('Start of program: download_songs.py...')
     config = dataloading.load_yaml(args.config)
+    username = config['username']
 
-    # getting the environmental variables
-    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
-
-    # check if they are set
-    if client_id is None:
-        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
-    elif client_secret is None:
-        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
-    
-    client_credentials_manager = SpotifyClientCredentials(
-        client_id=client_id, client_secret=client_secret)
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    sp = utils.get_auth_spotipy_obj(username)
 
     # since the ytmdl is just a command line tool, we need to call it in the shell
     songs = list_songs_from_spotify_playlist(sp=sp,
@@ -65,6 +57,7 @@ def main(args):
 
     for song in songs:
         os.system(song)
+    logger.info('End of program: download_songs.py\n')
 
 
 if __name__ == "__main__":

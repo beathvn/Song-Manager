@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 # user imports
 import helpers.dataloading as dataloading
+from logger import logger
 
 
 def create_fav_songs_csv(sp: spotipy.Spotify, outfile_name: str)-> None:
@@ -23,7 +24,7 @@ def create_fav_songs_csv(sp: spotipy.Spotify, outfile_name: str)-> None:
     """
 
     if os.path.exists(outfile_name):
-        print('csv file already exists')
+        logger.warn('csv file already exists')
         return
 
     # getting all saved tracks:
@@ -41,8 +42,7 @@ def create_fav_songs_csv(sp: spotipy.Spotify, outfile_name: str)-> None:
         results += track_results['items']
         
 
-    # Print the total number of retrieved tracks
-    print(f"Retrieved {len(results)} saved tracks.")
+    logger.info(f"Retrieved {len(results)} saved tracks.")
 
     # formatting and filtering the data and saving it
     df_messy = pd.DataFrame(results)
@@ -70,7 +70,7 @@ def create_csv_from_songs_in_playlists(sp: spotipy.Spotify, username:str, outfil
         playlists_of_interest (list): list of all playlist_ids you want the csv file to contain
     """
     if os.path.exists(outfile_name):
-        print('csv file already exists')
+        logger.warn('csv file already exists')
         return
 
     playlists = sp.user_playlists(username)
@@ -119,7 +119,7 @@ def create_csv_from_songs_in_followed_artists(sp: spotipy.Spotify, outfile_name:
         artist_id_to_name (dict): dict containing the artist_id as key and the artist_name as value
     """
     if os.path.exists(outfile_name):
-        print('csv file already exists')
+        logger.warn('csv file already exists')
         return
     
     # list to hold all the dataframes for each artist
@@ -148,6 +148,6 @@ def create_csv_from_songs_in_followed_artists(sp: spotipy.Spotify, outfile_name:
     df_final = pd.concat(dfs, axis=0).reset_index(drop=True)
     df_final.to_csv(outfile_name, index=False)
 
-    print(f'Retrieved {len(df_final)} songs for {len(artist_id_to_name)} artists.')
+    logger.info(f'Retrieved {len(df_final)} songs for {len(artist_id_to_name)} artists.')
 
     return

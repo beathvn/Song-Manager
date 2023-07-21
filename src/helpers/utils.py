@@ -7,10 +7,9 @@ import platform
 import subprocess
 import sys
 
-
-def print_divider():
-    print('--------------------------')
-
+# 3rd party imports
+import spotipy
+import spotipy.util as util
 
 
 def query_yes_no(question, default="yes"):
@@ -57,3 +56,30 @@ def open_file(filepath: str)-> None:
         os.startfile(filepath)
     else:  # linux variants
         subprocess.call(('xdg-open', filepath))
+
+
+def get_auth_spotipy_obj(username):
+    """Create spotipy object from given username and environmental
+    SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and SPOTIPY_REDIRECT_URI
+    """
+    
+    # getting the environmental variables
+    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
+    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
+    redirect_uri = os.environ.get('SPOTIPY_REDIRECT_URI')
+    
+    if client_id is None:
+        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
+    elif client_secret is None:
+        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
+    elif redirect_uri is None:
+        raise Exception('SPOTIPY_REDIRECT_URI environmental variable not found')
+
+    token = util.prompt_for_user_token(
+            username=username,
+            scope='playlist-modify-public',
+            client_id=client_id,
+            client_secret=client_secret,
+            redirect_uri=redirect_uri)
+
+    return spotipy.Spotify(auth=token)

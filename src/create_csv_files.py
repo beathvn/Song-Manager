@@ -7,42 +7,21 @@ from argparse import ArgumentParser
 from datetime import datetime
 import os
 
-# 3rd party imports
-import spotipy
-import spotipy.util as util
-
 # user imports
 import helpers.dataloading as dataloading
 import helpers.datastoring as datastoring
+from helpers.logger import logger
+import helpers.utils as utils
 
 
 def main(args):
+    logger.info('Start of program: create_csv_files.py...')
     ################## READING CONFIGURATION ##################
     config = dataloading.load_yaml(args.configfile)
     username = config['username']
     data_path = config['datapath']
     
-    # getting the environmental variables
-    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
-    redirect_uri = os.environ.get('SPOTIPY_REDIRECT_URI')
-    
-    if client_id is None:
-        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
-    elif client_secret is None:
-        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
-    elif redirect_uri is None:
-        raise Exception('SPOTIPY_REDIRECT_URI environmental variable not found')
-
-    token = util.prompt_for_user_token(
-            username=username,
-            scope='playlist-modify-public',
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri=redirect_uri)
-
-    sp = spotipy.Spotify(auth=token)
-
+    sp = utils.get_auth_spotipy_obj(username)
     ################## END READING CONFIGURATION ##################
     
     # create csv of the current tracks in the playlists
@@ -66,6 +45,7 @@ def main(args):
                                                           outfile_name= os.path.join(data_path, filename),
                                                           artist_id_to_name=config['artist_id_to_name'],
                                                           )
+    logger.info('End of program: create_csv_files.py\n')
 
 
 if __name__ == "__main__":

@@ -65,7 +65,7 @@ def normalize_files(files: list, source_folder, destination_folder):
 
 
 def main(args):
-    logger.info('Start of program: Normalize Audio')
+    logger.info('Start of program: normalize_audio.py...')
     source_folder = args.source
     destination_folder = args.destination
     xml_file = args.xmlfile
@@ -87,7 +87,7 @@ def main(args):
     files = [f for f in os.listdir(source_folder) if os.path.isfile(os.path.join(source_folder, f)) and not f.startswith('.')]
     # normalize_files(files, source_folder, destination_folder)
 
-    logger.info('End of program: Normalize Audio\n')
+    logger.info('Start of program: normalize_audio.py\n')
 
 
 if __name__ == "__main__":

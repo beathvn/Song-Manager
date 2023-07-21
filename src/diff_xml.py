@@ -21,7 +21,9 @@ from helpers.logger import logger
 import helpers.utils as utils
 
 
-def main(args):    
+def main(args):
+    logger.info('Start of program: diff_xml.py...')
+
     config = dataloading.load_yaml(args.config)
     datapath = config['datapath']
 
@@ -77,6 +79,7 @@ def main(args):
     # TODO: I don't want to calculate the filename again. Can't i get the logger handler somehow?
     if utils.query_yes_no('Open the log file?'):
         utils.open_file(f'./logs/log {datetime.now().strftime("%Y-%m-%d")}.txt')
+    logger.info('End of program: diff_xml.py\n')
 
 
 if __name__ == "__main__":

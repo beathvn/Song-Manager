@@ -5,13 +5,10 @@
 # system imports
 from argparse import ArgumentParser
 import os
-import unicodedata
-import subprocess
 from datetime import datetime
 
 # 3rd party imports
 from dirsync import sync
-from colorama import Fore, Style
 
 # user imports
 from helpers.logger import logger
@@ -52,23 +49,11 @@ def update_versions_txt(version_file: str, folder_name: str) -> None:
         raise ValueError(
             f'Folder name "{folder_name}" not found in text file. Check spelling!')
     else:
-        print(Fore.GREEN +
-              f'Updated "{folder_name}" to "{current_date}"' + Style.RESET_ALL)
+        logger.info(f'Updated "{folder_name}" to "{current_date}"')
 
     # Write the modified list back to the text file
     with open(version_file, 'wt') as file:
         file.writelines(lines)
-
-
-def contains_illegal_characters(text):
-    """
-    checking for illegal characters according to unicodedata
-    """
-    result = False
-    for char in text:
-        if unicodedata.combining(char) != 0:
-            result = True
-    return result
 
 
 def sync_folders(master_folder: str, slave_folder: str):
@@ -77,13 +62,15 @@ def sync_folders(master_folder: str, slave_folder: str):
 
 
 def main(args):    
+    logger.info('Start of program: sync_folders.py...')
     sync_folders(args.master_folder, args.slave_folder)
 
     if args.master_folder.endswith('Music Collection'):
         update_versions_txt(version_file=os.path.join(
             os.path.dirname(args.slave_folder), 'Versions.txt'), folder_name='Music Collection')
     else:
-        print('Syncing folder is not "Music Collection". Not updating Versions.txt')
+        logger.warn('Syncing folder is not "Music Collection". Not updating Versions.txt')
+    logger.info('End of program: sync_folders.py\n')
 
 
 if __name__ == "__main__":

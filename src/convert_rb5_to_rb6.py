@@ -7,9 +7,11 @@ from argparse import ArgumentParser
 
 # user imports
 from helpers.RB_handler import RB_handler_five_six
+from helpers.logger import logger
 
 
 def main(args):
+    logger.info('Start of program: convert_rb5_to_rb6.py...')
     # define here the keys you want to update
     keys_to_update = ['@Name', '@Artist', '@Album', '@Genre',
                       '@Rating', 'POSITION_MARK', '@Comments', '@PlayCount', '@Grouping', '@Colour']
@@ -26,6 +28,7 @@ def main(args):
 
     # exporting the changed data into an xml, so that we can import it later into rekordbox
     mark.export_data_to_xml(args.output_file)
+    logger.info('End of program: convert_rb5_to_rb6.py\n')
 
 
 if __name__ == "__main__":

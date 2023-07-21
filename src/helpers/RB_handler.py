@@ -9,6 +9,9 @@ from datetime import date
 # 3rd party imports
 import xmltodict
 
+# user imports
+from helpers.logger import logger
+
 
 class RB_handler():
     def __init__(self, rb_input_path: str) -> None:
@@ -17,14 +20,12 @@ class RB_handler():
         Args:
             rb_input_path (str): path to xml file of rekordbox database
         """
+        logger.info('Starting up RB handler...')
         # reading the xml files into a pandas data series
         self.rawdata_rb = self._get_input_data_from_xml(rb_input_path)
 
         # ignoring not interesting columns
         self.data = self.rawdata_rb['DJ_PLAYLISTS']['COLLECTION']['TRACK']
-
-        # this dict holds as keys the title and as values a list of the things you want to write in the end
-        self.output_log = {}
 
         return
 
@@ -39,7 +40,7 @@ class RB_handler():
         """
         with open(filepath, 'r') as xml_file:
             input_data = xmltodict.parse(xml_file.read())
-            print('Successfully loaded the XML File!')
+            logger.info('Successfully loaded the XML File!')
             return input_data
 
     def export_data_to_xml(self, out_path: str) -> None:
@@ -48,37 +49,11 @@ class RB_handler():
         Args:
             out_path (str): filepath to where you want to change it
         """
-        print('Exporting to XML...')
+        logger.info('Exporting to XML...')
         with open(out_path, 'w') as xml_outfile:
             xml_outfile.write(xmltodict.unparse(self.rawdata_rb, pretty=True))
 
-        print('Done')
-
-        self._write_log_message()
-        return
-
-    def _write_log_message(self) -> None:
-        """writes the accumulated information (in the class intern dict) into a outfile
-        """
-        print('Writing log message...')
-
-        out_folder = './logs/'
-        outfile_path = out_folder + f'{date.today()} RB Handler log message.txt'
-
-        if not os.path.exists(out_folder):
-            os.makedirs(out_folder)
-            print(f'Created folder \"{out_folder}\" for log message.')
-
-        # open file in write mode
-        with open(outfile_path, 'w') as fp:
-            for title in self.output_log:
-                # write each item on a new line
-                fp.write('\n')
-                fp.write("%s\n" % title)
-                for item in self.output_log[title]:
-                    fp.write("%s\n" % item)
-
-        print(f'Saved log message in \"{outfile_path}\"')
+        logger.info('Exporting to XML...Done!')
         return
 
     def change_tracks_source_path(self, old_location: str, new_location: str) -> None:
@@ -89,9 +64,7 @@ class RB_handler():
             old_location (str): location you want to change.
             new_location (str): location you want to change it to.
         """
-        # init the output log dict, so that we can write a log message
         out_log_title = 'DID NOT CHANGE LOCATION OF:'
-        self.output_log[out_log_title] = []
 
         # counter to keep track of the number of tracks, that were changed and the ones, that arn't
         cnt_changed_tracks = 0
@@ -105,18 +78,15 @@ class RB_handler():
 
             # if the track wasn't stroed in old_location, don't change the location information
             if changed_location == curr_location:
-                self.output_log[out_log_title].append(
-                    i['@Name'].ljust(60) + curr_location)
+                logger.warning(out_log_title + i['@Name'].ljust(60) + curr_location)
                 cnt_skipped_tracks += 1
             else:
                 i['@Location'] = changed_location
                 cnt_changed_tracks += 1
 
-        print(f'Went threw {cnt_skipped_tracks + cnt_changed_tracks} tracks.'
+        logger.info(f'Went threw {cnt_skipped_tracks + cnt_changed_tracks} tracks.'
               + f'\nChanged location of {cnt_changed_tracks} trakcks from \"{old_location}\" to \"{new_location}\".'
               + f'\nIgrnored {cnt_skipped_tracks} tracks.')
-
-        print('For more information about the skipped tracks, see log message.')
 
         return
 
@@ -138,36 +108,15 @@ class RB_handler_five_six():
 
         self.data5 = self.rawdata_rb5['DJ_PLAYLISTS']['COLLECTION']['TRACK']
         self.data6 = self.rawdata_rb6['DJ_PLAYLISTS']['COLLECTION']['TRACK']
-        print('Successfully loaded the XML Files from Rekordbox 5 and 6')
+        logger.info('Successfully loaded the XML Files from Rekordbox 5 and 6')
 
         self.location_of_interest = location_of_interest
-
-        # this dict holds as keys the title and as values a list of the things you want to write in the end
-        self.output_log = {}
 
         # the given keys will be updated in rb6 given from 5
         self.keys_to_update = keys_to_update
 
         # generating the rb5 to rb6 dict
         self._generate_mapping_dict_from_5to6()
-
-        return
-
-    def write_log_message(self) -> None:
-        """writes the accumulated information (in the class intern dict) into a outfile
-        """
-
-        # TODO: if the log folder doesn't exist, create it
-        # open file in write mode
-        outfile_path = f'./logs/{date.today()} RB 5-6 log message.txt'
-        with open(outfile_path, 'w') as fp:
-            for title in self.output_log:
-                # write each item on a new line
-                fp.write('\n')
-                fp.write("%s\n" % title)
-                for item in self.output_log[title]:
-                    fp.write("%s\n" % item)
-            print('Done')
 
         return
 
@@ -179,16 +128,11 @@ class RB_handler_five_six():
         """
         indecies_of_rb5 = list(self.map_from_5_to_6.keys())
 
-        # defining the keys for the output dict
-        self.output_log['UPDATED TRACKS'] = []
-        self.output_log['SKIPPED TRACKS'] = []
-        self.output_log['DELETION INFORMATION'] = []
-
         if number_of_tracks > 0:
-            print(f'Updating {number_of_tracks} tracks...')
+            logger.info(f'Updating {number_of_tracks} tracks...')
             indecies_of_rb5 = indecies_of_rb5[:number_of_tracks]
         else:
-            print('Updating all tracks...')
+            logger.info('Updating all tracks...')
 
         for curr_rb5_index in indecies_of_rb5:
             self._update_file(
@@ -202,7 +146,7 @@ class RB_handler_five_six():
         """updates the playlists on position 3 and 4 of the loaded data6 according to 5
         """
 
-        print('Converting playlists...')
+        logger.info('Converting playlists...')
 
         # in this dict we have as key the trackid of rb5 and value is key of rb6
         trackid_mapping = self._get_trackid_mapping()
@@ -225,14 +169,14 @@ class RB_handler_five_six():
                         try:
                             curr_song['@Key'] = trackid_mapping[curr_song['@Key']]
                         except:
-                            print(f'Could not convert song {curr_song}')
+                            logger.warning(f'Could not convert song {curr_song}')
 
         # updating the raw_data of rb6
         root_folders_rb6 = self.rawdata_rb6['DJ_PLAYLISTS']['PLAYLISTS']['NODE']['NODE']
         root_folders_rb6[3]['NODE'] = folder_one
         root_folders_rb6[4]['NODE'] = folder_two
 
-        print('Done')
+        logger.info('Converting playlists...Done!')
 
         return
 
@@ -279,17 +223,14 @@ class RB_handler_five_six():
                 # if there are information in rb6, which are not available in rb5, just delete those
                 if curr_key in data_to_update.keys():
                     trackname = data_to_update['@Name']
-                    self.output_log['DELETION INFORMATION'].append(
-                        f'Deleted the {curr_key} information in {trackname}')
+                    logger.warning(f'Deleted the {curr_key} information in {trackname}')
                     del data_to_update[curr_key]
 
         # writing in the output message, the name of the track, which was updated
         if did_change:
-            self.output_log['UPDATED TRACKS'].append(
-                data_to_update['@Name'])
+            logger.info(f"Updated \t{data_to_update['@Name']}")
         else:
-            self.output_log['SKIPPED TRACKS'].append(
-                data_to_update['@Name'])
+            logger.info(f"Skipped \t{data_to_update['@Name']}")
 
         return
 
@@ -316,12 +257,11 @@ class RB_handler_five_six():
         self.map_from_5_to_6 = map_from_5_to_6
 
         # writing the files that couldn't be matched
-        self.output_log['FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:'] = []
+        logger.warn('FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:')
         for failed_index in failed:
-            self.output_log['FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:'].append(
-                rb5_index_to_location_dict[failed_index])
+            logger.warn(rb5_index_to_location_dict[failed_index])
 
-        print("Successfully created the mapping dict from rb5 to rb6")
+        logger.info("Successfully created the mapping dict from rb5 to rb6")
 
         return
 
@@ -351,7 +291,7 @@ class RB_handler_five_six():
             mapped_dict[curr_index] = data[curr_index]['@Location']
 
         for i in notinterested_indecies:
-            print(
+            logger.warn(
                 f"Failed to map {data[i]['@Name' ]}".ljust(60) + f"in locatoin: {data[i]['@Location']}")
 
         return mapped_dict
@@ -375,10 +315,10 @@ class RB_handler_five_six():
         Args:
             out_path (str): filepath to where you want to change it
         """
-        print('Exporting to XML...')
+        logger.info('Exporting to XML...')
         with open(out_path, 'w') as xml_outfile:
             xml_outfile.write(xmltodict.unparse(self.rawdata_rb6))
 
-        print('Done')
+        logger.info('Exporting to XML...Done!')
 
         return

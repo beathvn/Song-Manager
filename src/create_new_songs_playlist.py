@@ -15,6 +15,7 @@ import spotipy.util as util
 import helpers.dataloading as dataloading
 import helpers.dataprocessing as dataprocessing
 from helpers.logger import logger
+import helpers.utils as utils
 
 
 def get_new_arrival_song_list_and_limit(data_path: str, dict_playlist_limits: dict, dict_uri_to_name: dict)-> list:
@@ -78,33 +79,13 @@ def create_playlist_of_songlist(sp: spotipy.Spotify, username: str, playlist_nam
 
 
 def main(args):
+    logger.info('Start of program: create_new_songs_playlist.py...')
     ################## READING CONFIGURATION ##################
     config = dataloading.load_yaml(args.configfile)
     username = config['username']
     data_path = config['datapath']
-    
-    # getting the environmental variables
-    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
-    redirect_uri = os.environ.get('SPOTIPY_REDIRECT_URI')
-    
-    # check if they are set
-    if client_id is None:
-        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
-    elif client_secret is None:
-        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
-    elif redirect_uri is None:
-        raise Exception('SPOTIPY_REDIRECT_URI environmental variable not found')
 
-    token = util.prompt_for_user_token(
-            username=username,
-            scope='playlist-modify-public',
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri=redirect_uri)
-
-    sp = spotipy.Spotify(auth=token)
-
+    sp = utils.get_auth_spotipy_obj(username)
     ################## END READING CONFIGURATION ##################
     
     dict_playlist_limits = config['playlist_to_allowed_tracks']
@@ -120,6 +101,7 @@ def main(args):
                                 song_list=song_list,
                                 )
     logger.info(f'Created the playlist {playlist_name} with {len(song_list)} songs for the user {username} songs!')
+    logger.info('End of program: create_new_songs_playlist.py\n')
 
 
 if __name__ == "__main__":

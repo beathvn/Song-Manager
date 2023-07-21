@@ -16,31 +16,22 @@ from spotipy.oauth2 import SpotifyClientCredentials
 # user imports
 import helpers.dataloading as dataloading
 import helpers.dataprocessing as dataprocessing
+from helpers.logger import logger
+import helpers.utils as utils
 
 
 def main(args):
+    logger.info('Start of program: download_songs_from_url.py...')
     config = dataloading.load_yaml(args.config)
+    username = config['username']
 
-    # getting the environmental variables
-    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
-
-    if client_id is None:
-        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
-    elif client_secret is None:
-        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
-
-    # setting up the spotipy object
-    client_credentials_manager = SpotifyClientCredentials(
-        client_id=client_id, client_secret=client_secret)
-
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    sp = utils.get_auth_spotipy_obj(username)
 
     songs = dataloading.get_txt_lines_as_list(config['urllist'])
 
     # adding the spotify uris
     playlist_tracks = sp.user_playlist_tracks(
-        config['username'], playlist_id=config['playlist'])['items']
+        username, playlist_id=config['playlist'])['items']
 
     songs = [x + ' --spotify-id ' + y['track']['uri']
              for x, y in zip(songs, playlist_tracks)]
@@ -57,6 +48,7 @@ def main(args):
     # passing the commands to the command line
     for song in songs:
         os.system(song)
+    logger.info('End of program: download_songs_from_url.py\n')
 
 
 if __name__ == "__main__":

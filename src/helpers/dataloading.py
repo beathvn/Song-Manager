@@ -70,31 +70,9 @@ def get_playlist_total_tracks(sp: spotipy.Spotify, username: str, playlist_id: s
 
 
 def get_txt_lines_as_list(filepath: str)-> list:
-    """Reads the given .txt file in filepath and returns a list, 
-    where each entry is a seperate line in the txt file. Removes illegal characters.
-
-    Args:
-        filepath (str): path to the .txt file you want to read
-
-    Returns:
-        list: holding the lines of the .txt file
-    """
-    my_file = open(filepath, "r")
-    data = my_file.read()
-
-    if data == '':
-        return []
-    
-    # removing the characters ytmdl cannot handle
-    data = dataprocessing.remove_illegal_characters(data)
-
-    # replacing end of line('/n') with ' ' and
-    # splitting the text it further when '.' is seen.
-    data = data.split("\n")
-
-    # now return the list, but remove empty entries
-    return list(filter(bool, data))
-
+    with open(filepath, 'rt') as file:
+        lines = file.readlines()
+    return lines
 
 
 def get_dataframes_from_folder(data_path: str)-> list:
