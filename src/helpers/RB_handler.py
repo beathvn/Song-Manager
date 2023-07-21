@@ -56,37 +56,38 @@ class RB_handler():
         logger.info('Exporting to XML...Done!')
         return
 
-    def change_tracks_source_path(self, old_location: str, new_location: str) -> None:
+    def change_tracks_source_path(self, old_location: str, new_location: str, location_of_interest: str) -> None:
         """chaniging the source location of the tracks, found in old_location, to new_location.
-        Tracks, which aren't stroed in old_location are ignored.
+        Tracks, which aren't stroed in old_location are removed from self.data
 
         Args:
             old_location (str): location you want to change.
             new_location (str): location you want to change it to.
+            location_of_interest (str): files that are not stored in this directory will be removed.
         """
-        out_log_title = 'DID NOT CHANGE LOCATION OF:'
 
         # counter to keep track of the number of tracks, that were changed and the ones, that arn't
         cnt_changed_tracks = 0
-        cnt_skipped_tracks = 0
+        cnt_removed_tracks = 0
 
         # going threw all the tracks
         for i in self.data:
             curr_location = i['@Location']
-            changed_location = curr_location.replace(
-                old_location, new_location)
-
-            # if the track wasn't stroed in old_location, don't change the location information
-            if changed_location == curr_location:
-                logger.warning(out_log_title + i['@Name'].ljust(60) + curr_location)
-                cnt_skipped_tracks += 1
-            else:
-                i['@Location'] = changed_location
+            if location_of_interest in curr_location:
+                changed_location = curr_location.replace(
+                    old_location, new_location)
                 cnt_changed_tracks += 1
+                i['@Location'] = changed_location
+            else:    
+                logger.warning(f'Not in {location_of_interest}: ' + i['@Name'].ljust(60) + curr_location)
+                cnt_removed_tracks += 1
+                i['@Location'] = None
 
-        logger.info(f'Went threw {cnt_skipped_tracks + cnt_changed_tracks} tracks.'
+        self.data = [i for i in self.data if i['@Location'] is not None]
+
+        logger.info(f'Went threw {cnt_removed_tracks + cnt_changed_tracks} tracks.'
               + f'\nChanged location of {cnt_changed_tracks} trakcks from \"{old_location}\" to \"{new_location}\".'
-              + f'\nIgrnored {cnt_skipped_tracks} tracks.')
+              + f'\nRemoved {cnt_removed_tracks} tracks.')
 
         return
 

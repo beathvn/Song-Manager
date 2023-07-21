@@ -24,7 +24,9 @@ def main(args):
 
     # changing the tracks location
     benny.change_tracks_source_path(old_location=args.old_location,
-                                    new_location=args.new_location)
+                                    new_location=args.new_location,
+                                    location_of_interest=args.location_of_interest,
+                                    )
 
     # saving the changed xml
     benny.export_data_to_xml(out_path=args.save_location)
@@ -37,6 +39,7 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--old_location', default='')
     parser.add_argument('-n', '--new_location', default='')
     parser.add_argument('-p', '--save_location', default='')
+    parser.add_argument('-l', '--location_of_interest', default='')
 
     args = parser.parse_args()
     main(args)
