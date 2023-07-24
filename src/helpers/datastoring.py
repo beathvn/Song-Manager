@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # user imports
 import helpers.dataloading as dataloading
-from logger import logger
+from helpers.logger import logger
 
 
 def create_fav_songs_csv(sp: spotipy.Spotify, outfile_name: str)-> None:
