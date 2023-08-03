@@ -34,6 +34,18 @@ For Song downloading use the scripts **download_songs.py** or **download_songs_f
 3. Applying limits to each playlist so that there are not added too many songs. The limits are specified in the config file of the program. If there are 10 new songs found in a playlist, but the limit is set to 6, the 6 most popular songs are added. The popularity information provided by spotify is used. The popularity index is calculated by the total streams of a song, how recently a song has been played and the frequency a song has been played.
 4. Creating the playlist with the remaining songs.
 
+**Adding new playlists or artists**
+
+0. For this time, the newly added playlist won't be found in the new arrivals playlist.
+1. In the Spotify app, add the playlist(s) you want to add to the profile
+2. manually go threw the songs in the playlist and add the ones you want to have to your will-be-downloaded-playlist.
+3. Automatically create the new arrivals playlist (for this time without the newly added one, since you added it manually)
+4. Delete the csv files for the current day
+5. Add the playlist to the config (playlist_uri_to_name and playlist_to_allowed_tracks)
+6. Create new csv files for the current day with the newly added playlist in them - so the next time new songs from the playlist will be added automaticcaly
+
+It works the same way for adding new artists.
+
 ### Sync folders
 Simply execute the **sync_folders.py** script with the program arguments you want to have. For more information see the first few rows on the source file.
 
