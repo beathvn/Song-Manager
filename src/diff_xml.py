@@ -40,7 +40,7 @@ def main(args):
     newest_date_to_keep = old_file.sort_values(by='@DateAdded', ascending=False)['@DateAdded'].iloc[0]
     len_before = len(new_file)
     new_file = new_file[new_file['@DateAdded'] <= newest_date_to_keep]
-    logger.warning(f'Dropped {len_before - len(new_file)} rows of new file because they are newer than {newest_date_to_keep}')
+    logger.warning(f'Dropped {len_before - len(new_file)} out of {len_before} rows of new file because they are newer than {newest_date_to_keep}')
     
     len_before = len(new_file)
     new_file = new_file[new_file['@Location'].str.startswith(config['location_to_consider'])]

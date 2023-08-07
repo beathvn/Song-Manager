@@ -57,8 +57,7 @@ def update_versions_txt(version_file: str, folder_name: str) -> None:
 
 
 def sync_folders(master_folder: str, slave_folder: str):
-    filenames_to_exclude = [filename for filename in os.listdir(master_folder) if filename.startswith('.')]
-    sync(master_folder, slave_folder, 'sync', verbose=True, exclude=filenames_to_exclude, logger=logger, purge=True)
+    sync(master_folder, slave_folder, 'sync', verbose=True, ignore=['\.'], logger=logger, purge=True)
 
 
 def main(args):    
