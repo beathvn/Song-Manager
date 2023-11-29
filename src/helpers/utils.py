@@ -9,7 +9,7 @@ import sys
 
 # 3rd party imports
 import spotipy
-import spotipy.util as util
+from spotipy.oauth2 import SpotifyOAuth
 
 
 def query_yes_no(question, default="yes"):
@@ -58,28 +58,29 @@ def open_file(filepath: str)-> None:
         subprocess.call(('xdg-open', filepath))
 
 
-def get_auth_spotipy_obj(username):
+def get_auth_spotipy_obj(config: dict, scope: str) -> spotipy.Spotify:
     """Create spotipy object from given username and environmental
     SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and SPOTIPY_REDIRECT_URI
     """
     
     # getting the environmental variables
-    client_id = os.environ.get('SPOTIPY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIPY_CLIENT_SECRET')
-    redirect_uri = os.environ.get('SPOTIPY_REDIRECT_URI')
+    client_id = config['client_id']
+    client_secret = config['client_secret']
+    redirect_uri = config['redirect_uri']
     
     if client_id is None:
-        raise Exception('SPOTIPY_CLIENT_ID environmental variable not found')
+        raise Exception('SPOTIPY_CLIENT_ID not provided')
     elif client_secret is None:
-        raise Exception('SPOTIPY_CLIENT_SECRET environmental variable not found')
+        raise Exception('SPOTIPY_CLIENT_SECRET not provided')
     elif redirect_uri is None:
-        raise Exception('SPOTIPY_REDIRECT_URI environmental variable not found')
+        raise Exception('SPOTIPY_REDIRECT_URI not provided')
 
-    token = util.prompt_for_user_token(
-            username=username,
-            scope='playlist-modify-public',
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri=redirect_uri)
-
-    return spotipy.Spotify(auth=token)
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            scope=scope,
+            client_id=config['client_id'],
+            client_secret=config['client_secret'],
+            redirect_uri=config['redirect_uri'],
+        ),
+    )
+    return sp

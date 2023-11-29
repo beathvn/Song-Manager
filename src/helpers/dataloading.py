@@ -15,7 +15,7 @@ import helpers.dataprocessing as dataprocessing
 
 
 def load_yaml(filepath: str):
-    with open(filepath) as file:
+    with open(filepath, encoding='utf-8') as file:
         config = yaml.safe_load(file)
     return config
 

@@ -9,99 +9,160 @@ import os
 # 3rd party imports
 import pandas as pd
 import spotipy
-import spotipy.util as util
 
 # user imports
 import helpers.dataloading as dataloading
-import helpers.dataprocessing as dataprocessing
-from helpers.logger import logger
 import helpers.utils as utils
 
 
-def get_new_arrival_song_list_and_limit(data_path: str, dict_playlist_limits: dict, dict_uri_to_name: dict)-> list:
-    """Finds the new songs, added from the last time the csv got saved to today. 
-    Adds just as many tracks allowed by dict_playlist_limits. 
-    
-    Songs already saved are ignored and the most popular songs are added.
+def create_playlist_playlists_new_arrivals(sp: spotipy.Spotify, config, playlist_name: str):
+    df_playlists = pd.read_pickle(os.path.join(
+        config['datapath'], 'playlists.pickle'))
+    df_playlists_names = pd.read_pickle(os.path.join(
+        config['datapath'], 'playlists_names.pickle'))
+    df_popularity = pd.read_pickle(os.path.join(
+        config['datapath'], 'popularity.pickle'))
+    df_tracks = pd.read_pickle(os.path.join(
+        config['datapath'], 'tracks.pickle'))
+    df_tracks_fav = pd.read_pickle(os.path.join(
+        config['datapath'], 'tracks_fav.pickle'))
 
-    Args:
-        data_path (str): path where the csv files are stored (they should be in a YYYY-MM-DD.csv form)
-        dict_playlist_limits (dict): keys are the playlist ids and value is the allowed tracks to be added
-        dict_uri_to_name (dict): keys are the playlist uris and value is the actual name of the playlist
+    date_of_interest = df_playlists.sort_values(
+        by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
 
-    Returns:
-        list: lists the uri of the unique songs
-    """
+    # keeping just the newest adds to the playlists
+    df_playlists = df_playlists[(df_playlists.date_removed.isnull()) & (
+        df_playlists.date_added == date_of_interest)]
 
-    df_pla_old, df_pla_new, df_art_old, df_art_new, df_fav = dataloading.get_dataframes_from_folder(data_path)
+    # keeping just the playlists of interest (the dataset could hold also more playlists)
+    df_playlists = df_playlists[df_playlists.id.isin(
+        config['playlist_id_to_name'].keys())]
 
-    pla_new = dataprocessing.filter_df_new_arrivals(df_old=df_pla_old, df_new=df_pla_new)
-    art_new = dataprocessing.filter_df_new_arrivals(df_old=df_art_old, df_new=df_art_new)
+    # dropping tracks, that are already favourites
+    df_playlists = df_playlists[~df_playlists.track_id.isin(df_tracks_fav.id)]
 
-    # combining the dataframes
-    df_new_arrivals = pd.concat([pla_new, art_new], ignore_index=True)
+    # removing duplicates when looking at track_idid
+    df_playlists.drop_duplicates(subset=['track_id'], inplace=True)
 
-    added_by_artist = art_new.value_counts(subset=['artist_name'])
-    for index, value in enumerate(added_by_artist):
-        logger.info(f'added {value} new tracks from the artist {added_by_artist.index[index][0]}')
+    # remove duplicated when looking at at track_name and artist
+    df_playlists = df_playlists.join(
+        df_tracks.set_index('id'), on='track_id', how='left')
+    df_playlists.drop_duplicates(subset=['name', 'artists'], inplace=True)
 
-    # dropping the already saved tracks
-    df_new_arrivals = dataprocessing.remove_saved_tracks_from_df(df=df_new_arrivals, saved_track_ids=set(df_fav['id']))
+    # getting the popularity info into it
+    df_popularity = df_popularity[df_popularity.date == date_of_interest]
+    df_popularity.drop(columns=['date'], inplace=True)
+    df_playlists = df_playlists.join(
+        df_popularity.set_index('id'), on='track_id', how='left')
 
+    # getting the right amount of tracks per playlist (limited by config) - they must be sorted by popularity
+    df_playlists.sort_values(by=['id', 'value'], inplace=True, ascending=False)
 
-    # limiting the dataframe (with amount, popularity):
-    df_thin = dataprocessing.limit_df_count(df=df_new_arrivals, dict_playlist_limits=dict_playlist_limits, dict_uri_to_name=dict_uri_to_name)
+    # limiting the amount
 
-    return df_thin['track_id'].to_list()
+    def filter(group, config):
+        curr_playlist_id = group.head(1).id.iloc[0]
+        current_limit = config['playlist_to_allowed_tracks'][curr_playlist_id]
+        return group.head(current_limit)
 
+    df_playlists = df_playlists.groupby(by='id', sort=False).apply(
+        filter, config=config).reset_index(drop=True)
 
-def create_playlist_of_songlist(sp: spotipy.Spotify, username: str, playlist_name: str, song_list: list)-> None:
-    """Creates a spotify playlist with the provided songs
+    len_before = len(df_playlists)
+    df_playlists.dropna(subset=['track_id'], inplace=True)
+    if len_before != len(df_playlists):
+        print(
+            f'Dropped {len_before - len(df_playlists)} rows due to missing track_id')
 
-    Args:
-        sp (spotipy.Spotify): configured spotify object, which talks to the Spotify Web API
-        username (str): username of the person you want to create the playlist for
-        playlist_name (str): name of the playlist
-        song_list (list): uri list of the songs you want to add to the playlist
-    """
+    # storing the created playlist
+    df_playlists.rename(columns={
+                        'id': 'playlist_id', 'value': 'popularity', 'name': 'track_name'}, inplace=True)
+    df_playlists = df_playlists.join(
+        df_playlists_names.set_index('id'), on='playlist_id', how='left')
+    df_playlists.rename(columns={'name': 'playlist_name'}, inplace=True)
+    df_playlists.to_pickle(os.path.join(
+        config['datapath_playlists'], f'{date_of_interest} - from playlists.pickle'))
+
     # creating the playlist
-    playlist_id = sp.user_playlist_create(user=username, name=playlist_name, public=True)['id']
+    playlist_id = sp.user_playlist_create(
+        user=config['username'], name=playlist_name, public=True)['id']
+    # NOTE: possibly you can add a max of 100 tracks at once
+    sp.playlist_add_items(playlist_id, df_playlists.track_id.tolist())
 
-    # you can just add 100 tracks at a time
-    max_len = 100
-    if len(song_list) > max_len:
-        for i in range((len(song_list) + max_len - 1) // max_len):
-            sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=song_list[i*max_len:(i+1)*max_len])
-    else:
-        sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=song_list)
 
-    return
+def create_playlist_artists_new_arrivals(sp: spotipy.Spotify, config: dict, playlist_name: str):
+    df_artists_names = pd.read_pickle(os.path.join(
+        config['datapath'], 'artists_names.pickle'))
+    df_artists = pd.read_pickle(os.path.join(
+        config['datapath'], 'artists.pickle'))
+    df_tracks = pd.read_pickle(os.path.join(
+        config['datapath'], 'tracks.pickle'))
+    df_tracks_fav = pd.read_pickle(os.path.join(
+        config['datapath'], 'tracks_fav.pickle'))
+
+    date_of_interest = df_artists.sort_values(
+        by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
+
+    # keeping just the newest adds to the artist
+    df_artists = df_artists[(df_artists.date_removed.isnull()) & (
+        df_artists.date_added == date_of_interest)]
+
+    # keeping just the artists of interest (the dataset could hold also more artists)
+    df_artists = df_artists[df_artists.id.isin(
+        config['artist_id_to_name'].keys())]
+
+    # dropping tracks, that are already favourites
+    df_artists = df_artists[~df_artists.track_id.isin(df_tracks_fav.id)]
+
+    # removing duplicates when looking at track_id
+    df_artists.drop_duplicates(subset=['track_id'], inplace=True)
+
+    # remove duplicated when looking at at track_name and artist
+    df_artists = df_artists.join(
+        df_tracks.set_index('id'), on='track_id', how='left')
+    df_artists.drop_duplicates(subset=['name', 'artists'], inplace=True)
+
+    len_before = len(df_artists)
+    df_artists.dropna(subset=['track_id'], inplace=True)
+    if len_before != len(df_artists):
+        print(
+            f'Dropped {len_before - len(df_artists)} rows due to missing track_id')
+
+    # storing the created playlist
+    df_artists.rename(columns={'id': 'artist_id',
+                      'name': 'track_name'}, inplace=True)
+    df_artists = df_artists.join(
+        df_artists_names.set_index('id'), on='artist_id', how='left')
+    df_artists.to_pickle(os.path.join(
+        config['datapath_playlists'], f'{date_of_interest} - from artists.pickle'))
+
+    # creating the playlist
+    playlist_id = sp.user_playlist_create(
+        user=config['username'], name=playlist_name, public=True)['id']
+    # NOTE: possibly you can add a max of 100 tracks at once
+    sp.playlist_add_items(playlist_id, df_artists.track_id.tolist())
 
 
 def main(args):
-    logger.info('Start of program: create_new_songs_playlist.py...')
+    print('Start of program: create_new_songs_playlist.py...')
     ################## READING CONFIGURATION ##################
     config = dataloading.load_yaml(args.configfile)
-    username = config['username']
-    data_path = config['datapath']
 
-    sp = utils.get_auth_spotipy_obj(username)
-    ################## END READING CONFIGURATION ##################
-    
-    dict_playlist_limits = config['playlist_to_allowed_tracks']
-    
-    # secondly, find all the unique songs from the last two files
-    song_list = get_new_arrival_song_list_and_limit(data_path=data_path, dict_playlist_limits=dict_playlist_limits, dict_uri_to_name=config['playlist_uri_to_name'])
+    sp = utils.get_auth_spotipy_obj(config, scope='playlist-modify-public')
 
-    # thirdly, create the playlist with the songs
-    playlist_name = config['playlist_name'] + ' ' + datetime.now().strftime("%Y-%m-%d")
-    create_playlist_of_songlist(sp=sp,
-                                username=username,
-                                playlist_name=playlist_name,
-                                song_list=song_list,
-                                )
-    logger.info(f'Created the playlist {playlist_name} with {len(song_list)} songs for the user {username} songs!')
-    logger.info('End of program: create_new_songs_playlist.py\n')
+    create_playlist_playlists_new_arrivals(
+        sp=sp,
+        config=config,
+        playlist_name='New Arrivals Playlists ' + datetime.now().strftime("%Y-%m-%d")
+    )
+
+    create_playlist_artists_new_arrivals(
+        sp=sp,
+        config=config,
+        playlist_name='New Arrivals Artists ' + datetime.now().strftime("%Y-%m-%d")
+    )
+
+    print('End of program: create_new_songs_playlist.py\n')
 
 
 if __name__ == "__main__":
