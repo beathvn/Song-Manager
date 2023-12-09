@@ -15,8 +15,8 @@ This project provides the following main funcionalities:
 ## Getting started
 Before you start, there is a few things you need to setup:
 1. Setting up a spotify developer account and a spotify app.
-2. Adding your SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and the SPOTIPY_REDIRECT_URI (you get those, once you finished step 1) to the environmental variables.
-3. Setting up some yaml files for configuration. Threwout the project yaml files should be passed as a program argument to configure the different runs. I suggest you create a config folder holding all your different yaml files. Since you should place your username and other personal information inside the yaml file, i made git, ignore the "config" folder.
+2. Adding your SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and the SPOTIPY_REDIRECT_URI (you get those, once you finished step 1) to a config file, similar to the connection_dummy.yaml file. These variables are used to setup the connection between this app and your spotify app.
+3. Setting up some yaml files for configuration. Throughout the project yaml files should be passed as a program argument to configure the different runs. I suggest you create a config folder holding all your different yaml files. Since you should place your username and other personal information inside the yaml file, i made git, ignore the "config" folder.
 
 ## Usage:
 ### Song downloading

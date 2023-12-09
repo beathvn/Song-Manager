@@ -30,8 +30,8 @@ def create(config: dict):
     create_table('artists_names', ['id', 'name'])
 
 
-def _update_playlists_names(sp, config):
-    playlists = sp.user_playlists(config['username'])
+def _update_playlists_names(sp, config: dict, connection: dict):
+    playlists = sp.user_playlists(connection['username'])
 
     df_all = pd.DataFrame(playlists['items'])
     df_playlists_names = df_all[['id', 'name']].copy(deep=True)
@@ -39,9 +39,11 @@ def _update_playlists_names(sp, config):
 
     # keeping just the playlists that we want to keep track on
     df_playlists_names = df_playlists_names[df_playlists_names.id.isin(
-        list(config['playlist_id_to_name'].keys()))].reset_index(drop=True)
+        list(config['playlist_to_allowed_tracks'].keys())
+    )].reset_index(drop=True)
     df_playlists_names.to_pickle(os.path.join(
-        config['datapath'], 'playlists_names.pickle'))
+        config['datapath'], 'playlists_names.pickle')
+    )
 
 
 def _update_artists_names(sp, config):
@@ -51,7 +53,7 @@ def _update_artists_names(sp, config):
         artists_names['id'].append(id)
         artists_names['name'].append(sp.artist(artist_id=id)['name'])
     pd.DataFrame(artists_names).to_pickle(
-        './data/spotify/artists_names.pickle')
+        './data/spotify/artists_names.pickle')  # TODO: dont hardcode this
 
 
 def _drop_trackid_duplicates(df: pd.DataFrame):
@@ -64,7 +66,14 @@ def _drop_trackid_duplicates(df: pd.DataFrame):
     return df
 
 
-def _update_popularity_and_tracks_dicts(df_popularity, df_tracks, popularity_to_add, tracks_to_add, current_track, today):
+def _update_popularity_and_tracks_dicts(
+        df_popularity: pd.DataFrame,
+        df_tracks: pd.DataFrame,
+        popularity_to_add: dict,
+        tracks_to_add: dict,
+        current_track,
+        today,
+):
     track_id_curr = current_track['id']
 
     # update Popularity table
@@ -84,12 +93,17 @@ def _update_popularity_and_tracks_dicts(df_popularity, df_tracks, popularity_to_
     return popularity_to_add, tracks_to_add
 
 
-def _update_grouped_table(df_names: pd.DataFrame, df_group: pd.DataFrame, tracks_to_add: dict, popularity_to_add: dict, df_popularity: pd.DataFrame, df_tracks: pd.DataFrame, sp, mode):
+def _update_grouped_table(df_names: pd.DataFrame,
+                          df_group: pd.DataFrame,
+                          tracks_to_add: dict,
+                          popularity_to_add: dict,
+                          df_popularity: pd.DataFrame,
+                          df_tracks: pd.DataFrame,
+                          sp,
+                          mode: str,
+                          connection: dict
+):
     """A groud can be playlists or artists
-
-    Args:
-        df_names (pd.DataFrame): holding as id the artist id or playlists id and as name the name of the artist or playlist
-        df_group (pd.DataFrame): the table that needs to be updated
     """
     today = pd.Timestamp.today().date()
     lst_group_new = []
@@ -106,7 +120,7 @@ def _update_grouped_table(df_names: pd.DataFrame, df_group: pd.DataFrame, tracks
         if mode == 'playlists':
             group_tracks = dataloading.get_playlist_total_tracks(
                 sp=sp,
-                username=config['username'],
+                username=connection['username'],
                 playlist_id=row.id,
             )
             track_ids_present = [f['track']['id']
@@ -155,7 +169,14 @@ def _update_grouped_table(df_names: pd.DataFrame, df_group: pd.DataFrame, tracks
     return df_group, tracks_to_add, popularity_to_add
 
 
-def _update_tracks_fav(sp, df_tracks_fav: pd.DataFrame, tracks_to_add: dict, popularity_to_add: dict, df_popularity: pd.DataFrame, df_tracks: pd.DataFrame):
+def _update_tracks_fav(
+        sp,
+        df_tracks_fav: pd.DataFrame,
+        tracks_to_add: dict,
+        popularity_to_add: dict,
+        df_popularity: pd.DataFrame,
+        df_tracks: pd.DataFrame,
+):
     results = []
 
     # Loop through the results until we have retrieved all tracks
@@ -207,11 +228,11 @@ def _update_tracks_fav(sp, df_tracks_fav: pd.DataFrame, tracks_to_add: dict, pop
     return df_tracks_fav, tracks_to_add, popularity_to_add
 
 
-def update(config: dict):
-    sp = utils.get_auth_spotipy_obj(config, scope='user-library-read')
+def update(config: dict, connection: dict):
+    sp = utils.get_auth_spotipy_obj(connection, scope='user-library-read')
 
     ############ tracks and popularity tables ############
-    _update_playlists_names(sp, config)
+    _update_playlists_names(sp, config, connection)
     _update_artists_names(sp, config)
 
     df_tracks = pd.read_pickle(os.path.join(
@@ -238,6 +259,7 @@ def update(config: dict):
         df_tracks=df_tracks,
         sp=sp,
         mode='playlists',
+        connection=connection,
     )
     df_playlists.to_pickle(os.path.join(
         config['datapath'], 'playlists.pickle'))
@@ -256,6 +278,7 @@ def update(config: dict):
         df_tracks=df_tracks,
         sp=sp,
         mode='artists',
+        connection=connection,
     )
     df_artists.to_pickle(os.path.join(config['datapath'], 'artists.pickle'))
 
@@ -292,17 +315,20 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--mode', required=True)
     parser.add_argument(
         '-c', '--config', default='./config/spotiplaylist.yaml')
+    parser.add_argument(
+        '-n', '--connection', default='./config/connection.yaml')
     args = parser.parse_args()
 
     config = dataloading.load_yaml(args.config)
+    connection = dataloading.load_yaml(args.connection)
 
     if args.mode == 'create':
         print('Creating dataset from scratch...')
         create(config)
-        update(config)
+        update(config, connection)
     elif args.mode == 'update':
         print('Updating dataset...')
-        update(config)
+        update(config, connection)
     else:
         raise ValueError('Mode must be either "create" or "update"')
 

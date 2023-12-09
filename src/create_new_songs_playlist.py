@@ -15,7 +15,12 @@ import helpers.dataloading as dataloading
 import helpers.utils as utils
 
 
-def create_playlist_playlists_new_arrivals(sp: spotipy.Spotify, config, playlist_name: str):
+def create_playlist_playlists_new_arrivals(
+        sp: spotipy.Spotify,
+        config: dict,
+        connection: dict,
+        playlist_name: str,
+):
     df_playlists = pd.read_pickle(os.path.join(
         config['datapath'], 'playlists.pickle'))
     df_playlists_names = pd.read_pickle(os.path.join(
@@ -36,7 +41,7 @@ def create_playlist_playlists_new_arrivals(sp: spotipy.Spotify, config, playlist
 
     # keeping just the playlists of interest (the dataset could hold also more playlists)
     df_playlists = df_playlists[df_playlists.id.isin(
-        config['playlist_id_to_name'].keys())]
+        config['playlist_to_allowed_tracks'].keys())]
 
     # dropping tracks, that are already favourites
     df_playlists = df_playlists[~df_playlists.track_id.isin(df_tracks_fav.id)]
@@ -85,12 +90,17 @@ def create_playlist_playlists_new_arrivals(sp: spotipy.Spotify, config, playlist
 
     # creating the playlist
     playlist_id = sp.user_playlist_create(
-        user=config['username'], name=playlist_name, public=True)['id']
+        user=connection['username'], name=playlist_name, public=True)['id']
     # NOTE: possibly you can add a max of 100 tracks at once
     sp.playlist_add_items(playlist_id, df_playlists.track_id.tolist())
 
 
-def create_playlist_artists_new_arrivals(sp: spotipy.Spotify, config: dict, playlist_name: str):
+def create_playlist_artists_new_arrivals(
+        playlist_name: str,
+        sp: spotipy.Spotify,
+        config: dict,
+        connection: dict,
+):
     df_artists_names = pd.read_pickle(os.path.join(
         config['datapath'], 'artists_names.pickle'))
     df_artists = pd.read_pickle(os.path.join(
@@ -138,7 +148,7 @@ def create_playlist_artists_new_arrivals(sp: spotipy.Spotify, config: dict, play
 
     # creating the playlist
     playlist_id = sp.user_playlist_create(
-        user=config['username'], name=playlist_name, public=True)['id']
+        user=connection['username'], name=playlist_name, public=True)['id']
     # NOTE: possibly you can add a max of 100 tracks at once
     sp.playlist_add_items(playlist_id, df_artists.track_id.tolist())
 
@@ -147,18 +157,21 @@ def main(args):
     print('Start of program: create_new_songs_playlist.py...')
     ################## READING CONFIGURATION ##################
     config = dataloading.load_yaml(args.configfile)
+    connection = dataloading.load_yaml(args.connection)
 
-    sp = utils.get_auth_spotipy_obj(config, scope='playlist-modify-public')
+    sp = utils.get_auth_spotipy_obj(connection, scope='playlist-modify-public')
 
     create_playlist_playlists_new_arrivals(
         sp=sp,
         config=config,
+        connection=connection,
         playlist_name='New Arrivals Playlists ' + datetime.now().strftime("%Y-%m-%d")
     )
 
     create_playlist_artists_new_arrivals(
         sp=sp,
         config=config,
+        connection=connection,
         playlist_name='New Arrivals Artists ' + datetime.now().strftime("%Y-%m-%d")
     )
 
@@ -167,7 +180,10 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-c', '--configfile')
+    parser.add_argument('-c', '--configfile',
+                        default='./config/spotiplaylist.yaml')
+    parser.add_argument('-n', '--connection',
+                        default='./config/connection.yaml')
     args = parser.parse_args()
     
     main(args)

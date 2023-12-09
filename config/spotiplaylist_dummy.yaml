@@ -1,0 +1,8 @@
+datapath: ./data/spotify/
+datapath_playlists: ./data/spotify_playlists/
+storage_location: /Users/YOU/Downloads/
+
+playlist_to_allowed_tracks:
+    37i9dQZEVXbMDoHDwVN2tF: 2    # Top 50 Globale
+    4oLmXFdYv5ho24j9LEyPEN: 6    # House Nation
+    0ZhTd0v0esEM40nX1S66g0: 6    # STMPD RCRDS New Releases

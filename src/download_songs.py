@@ -9,10 +9,6 @@
 import os
 from argparse import ArgumentParser
 
-# 3rd party imports
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
 # user imports
 import helpers.dataprocessing as dataprocessing
 import helpers.dataloading as dataloading
@@ -39,9 +35,8 @@ def list_songs_from_spotify_playlist(sp, user, playlist):
 def main(args):
     logger.info('Start of program: download_songs.py...')
     config = dataloading.load_yaml(args.config)
-    username = config['username']
 
-    sp = utils.get_auth_spotipy_obj(username)
+    sp = utils.get_auth_spotipy_obj(config, 'playlist-modify-public')
 
     # since the ytmdl is just a command line tool, we need to call it in the shell
     songs = list_songs_from_spotify_playlist(sp=sp,

@@ -1,13 +1,16 @@
 # Folders
 .vscode/
-config/
 data/
 logs/
 scripts/
 *__pycache__
 tutorials
-venv/
+env/
 
 # files
 *.DS_Store
 *.cache*
+diff_xml.yaml
+download.yaml
+spotiplaylist.yaml
+connection.yaml
