@@ -258,9 +258,9 @@ class RB_handler_five_six():
         self.map_from_5_to_6 = map_from_5_to_6
 
         # writing the files that couldn't be matched
-        logger.warn('FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:')
+        logger.warning('FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:')
         for failed_index in failed:
-            logger.warn(rb5_index_to_location_dict[failed_index])
+            logger.warning(rb5_index_to_location_dict[failed_index])
 
         logger.info("Successfully created the mapping dict from rb5 to rb6")
 
@@ -292,7 +292,7 @@ class RB_handler_five_six():
             mapped_dict[curr_index] = data[curr_index]['@Location']
 
         for i in notinterested_indecies:
-            logger.warn(
+            logger.warning(
                 f"Failed to map {data[i]['@Name' ]}".ljust(60) + f"in locatoin: {data[i]['@Location']}")
 
         return mapped_dict

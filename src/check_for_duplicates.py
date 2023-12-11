@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 # user imports
 import helpers.dataloading as dataloading
 import helpers.utils as utils
-from logger import logger
+from helpers.logger import logger
 
 
 def main(args):
@@ -31,10 +31,10 @@ def main(args):
             duplicate_songnames.append(data.iloc[index]['@Name'])
 
     if len(duplicate_songnames) != 0:
-        logger.warn(
+        logger.warning(
             f'🚨 {len(duplicate_songnames)} TRACKS WHERE FOUND pointing to the same file on your harddisk:')
         for currsong in duplicate_songnames:
-            logger.warn('- ' + currsong)
+            logger.warning('- ' + currsong)
     else:
         logger.info('✅ No songs appearing more than once were found.')
     

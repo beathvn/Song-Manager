@@ -23,9 +23,10 @@ import helpers.utils as utils
 def main(args):
     logger.info('Start of program: download_songs_from_url.py...')
     config = dataloading.load_yaml(args.config)
-    username = config['username']
+    connection = dataloading.load_yaml(args.connection)
+    username = connection['username']
 
-    sp = utils.get_auth_spotipy_obj(username)
+    sp = utils.get_auth_spotipy_obj(connection, 'playlist-modify-public')
 
     songs = dataloading.get_txt_lines_as_list(config['urllist'])
 
@@ -53,7 +54,10 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-c', '--config')
+    parser.add_argument('-n', '--connection',
+                        default='./config/connection.yaml')
+    parser.add_argument('-c', '--config',
+                        default='./config/download.yaml')
 
     args = parser.parse_args()
     main(args)

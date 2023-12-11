@@ -24,7 +24,7 @@ def create_fav_songs_csv(sp: spotipy.Spotify, outfile_name: str)-> None:
     """
 
     if os.path.exists(outfile_name):
-        logger.warn('csv file already exists')
+        logger.warning('csv file already exists')
         return
 
     # getting all saved tracks:
@@ -70,7 +70,7 @@ def create_csv_from_songs_in_playlists(sp: spotipy.Spotify, username:str, outfil
         playlists_of_interest (list): list of all playlist_ids you want the csv file to contain
     """
     if os.path.exists(outfile_name):
-        logger.warn('csv file already exists')
+        logger.warning('csv file already exists')
         return
 
     playlists = sp.user_playlists(username)
@@ -119,7 +119,7 @@ def create_csv_from_songs_in_followed_artists(sp: spotipy.Spotify, outfile_name:
         artist_id_to_name (dict): dict containing the artist_id as key and the artist_name as value
     """
     if os.path.exists(outfile_name):
-        logger.warn('csv file already exists')
+        logger.warning('csv file already exists')
         return
     
     # list to hold all the dataframes for each artist

@@ -68,7 +68,8 @@ def main(args):
         update_versions_txt(version_file=os.path.join(
             os.path.dirname(args.slave_folder), 'Versions.txt'), folder_name='Music Collection')
     else:
-        logger.warn('Syncing folder is not "Music Collection". Not updating Versions.txt')
+        logger.warning(
+            'Syncing folder is not "Music Collection". Not updating Versions.txt')
     logger.info('End of program: sync_folders.py\n')
 
 
