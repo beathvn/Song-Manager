@@ -119,7 +119,7 @@ def create_playlist_artists_new_arrivals(
 
     # keeping just the artists of interest (the dataset could hold also more artists)
     df_artists = df_artists[df_artists.id.isin(
-        config['artist_id_to_name'].keys())]
+        config['artists_followed'])]
 
     # dropping tracks, that are already favourites
     df_artists = df_artists[~df_artists.track_id.isin(df_tracks_fav.id)]

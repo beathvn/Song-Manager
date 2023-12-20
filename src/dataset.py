@@ -5,6 +5,7 @@ import math
 
 # 3rd party imports
 import pandas as pd
+import spotipy
 from tqdm import tqdm
 
 # user imports
@@ -30,7 +31,7 @@ def create(config: dict):
     create_table('artists_names', ['id', 'name'])
 
 
-def _update_playlists_names(sp, config: dict, connection: dict):
+def _update_playlists_names(sp: spotipy.Spotify, config: dict, connection: dict):
     playlists = sp.user_playlists(connection['username'])
 
     df_all = pd.DataFrame(playlists['items'])
@@ -46,14 +47,14 @@ def _update_playlists_names(sp, config: dict, connection: dict):
     )
 
 
-def _update_artists_names(sp, config):
+def _update_artists_names(sp: spotipy.Spotify, config: dict):
     artists_names = {'id': [], 'name': []}
 
-    for id in tqdm(config['artist_id_to_name'].keys(), desc='Gettings artists names'):
+    for id in tqdm(config['artists_followed'], desc='Gettings artists names'):
         artists_names['id'].append(id)
         artists_names['name'].append(sp.artist(artist_id=id)['name'])
     pd.DataFrame(artists_names).to_pickle(
-        './data/spotify/artists_names.pickle')  # TODO: dont hardcode this
+        os.path.join(config['datapath'], 'artists_names.pickle'))
 
 
 def _drop_trackid_duplicates(df: pd.DataFrame):
@@ -99,7 +100,7 @@ def _update_grouped_table(df_names: pd.DataFrame,
                           popularity_to_add: dict,
                           df_popularity: pd.DataFrame,
                           df_tracks: pd.DataFrame,
-                          sp,
+                          sp: spotipy.Spotify,
                           mode: str,
                           connection: dict
 ):
