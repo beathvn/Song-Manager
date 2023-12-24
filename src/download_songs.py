@@ -35,12 +35,13 @@ def list_songs_from_spotify_playlist(sp, user, playlist):
 def main(args):
     logger.info('Start of program: download_songs.py...')
     config = dataloading.load_yaml(args.config)
+    connection = dataloading.load_yaml(args.connection)
 
-    sp = utils.get_auth_spotipy_obj(config, 'playlist-modify-public')
+    sp = utils.get_auth_spotipy_obj(connection, 'playlist-modify-public')
 
     # since the ytmdl is just a command line tool, we need to call it in the shell
-    songs = list_songs_from_spotify_playlist(sp=sp,
-                                      playlist=config['playlist'], user=config['username'])
+    songs = list_songs_from_spotify_playlist(
+        sp=sp, playlist=config['playlist'], user=connection['username'])
     
     songs = dataprocessing.remove_illegal_characters(songs)
 
@@ -58,5 +59,7 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-c', '--config')
+    parser.add_argument('-n', '--connection',
+                        default='./config/connection.yaml')
     args = parser.parse_args()
     main(args)
