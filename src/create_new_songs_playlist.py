@@ -15,6 +15,25 @@ import helpers.dataloading as dataloading
 import helpers.utils as utils
 
 
+def drop_known_tracks(
+        df_to_be_cleaned: pd.DataFrame,
+        df_tracks: pd.DataFrame,
+        df_popularity: pd.DataFrame,
+) -> pd.DataFrame:
+    df_popularity = df_popularity[df_popularity.id.duplicated(keep=False)]
+    df_popularity = df_popularity.join(
+        df_tracks.set_index('id'), on='id', how='left')
+    df_popularity['name_artists'] = df_popularity.name + \
+        ' ' + df_popularity.artists
+
+    df_to_be_cleaned['name_artists'] = df_to_be_cleaned.name + \
+        ' ' + df_to_be_cleaned.artists
+    df_to_be_cleaned = df_to_be_cleaned[~df_to_be_cleaned.name_artists.isin(
+        df_popularity.name_artists)]
+    df_to_be_cleaned.drop(columns=['name_artists'], inplace=True)
+    return df_to_be_cleaned
+
+
 def create_playlist_playlists_new_arrivals(
         sp: spotipy.Spotify,
         config: dict,
@@ -26,7 +45,6 @@ def create_playlist_playlists_new_arrivals(
         config['datapath'], 'playlists_names.csv')
     df_popularity = utils.read_csv_custom(config['datapath'], 'popularity.csv')
     df_tracks = utils.read_csv_custom(config['datapath'], 'tracks.csv')
-    df_tracks_fav = utils.read_csv_custom(config['datapath'], 'tracks_fav.csv')
 
     date_of_interest = df_playlists.sort_values(
         by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
@@ -39,16 +57,20 @@ def create_playlist_playlists_new_arrivals(
     df_playlists = df_playlists[df_playlists.id.isin(
         config['playlist_to_allowed_tracks'].keys())]
 
-    # dropping tracks, that are already favourites
-    df_playlists = df_playlists[~df_playlists.track_id.isin(df_tracks_fav.id)]
-
-    # removing duplicates when looking at track_idid
+    # removing duplicates when looking at track_id
     df_playlists.drop_duplicates(subset=['track_id'], inplace=True)
 
     # remove duplicated when looking at at track_name and artist
     df_playlists = df_playlists.join(
         df_tracks.set_index('id'), on='track_id', how='left')
     df_playlists.drop_duplicates(subset=['name', 'artists'], inplace=True)
+
+    # dropping tracks, that are already favourites looking at track_name and artist
+    df_playlists = drop_known_tracks(
+        df_to_be_cleaned=df_playlists,
+        df_tracks=df_tracks,
+        df_popularity=df_popularity,
+    )
 
     # getting the popularity info into it
     df_popularity = df_popularity[df_popularity.date == date_of_interest]
@@ -81,14 +103,15 @@ def create_playlist_playlists_new_arrivals(
     df_playlists = df_playlists.join(
         df_playlists_names.set_index('id'), on='playlist_id', how='left')
     df_playlists.rename(columns={'name': 'playlist_name'}, inplace=True)
-    df_playlists.to_csv(os.path.join(
-        config['datapath_playlists'], f'{date_of_interest} - from playlists.csv'), ignore_index=True)
+    if not DEBUG:
+        df_playlists.to_csv(os.path.join(
+            config['datapath_playlists'], f'{date_of_interest} - from playlists.csv'), ignore_index=True)
 
-    # creating the playlist
-    playlist_id = sp.user_playlist_create(
-        user=connection['username'], name=playlist_name, public=True)['id']
-    # NOTE: possibly you can add a max of 100 tracks at once
-    sp.playlist_add_items(playlist_id, df_playlists.track_id.tolist())
+        # creating the playlist
+        playlist_id = sp.user_playlist_create(
+            user=connection['username'], name=playlist_name, public=True)['id']
+        # NOTE: possibly you can add a max of 100 tracks at once
+        sp.playlist_add_items(playlist_id, df_playlists.track_id.tolist())
 
 
 def create_playlist_artists_new_arrivals(
@@ -101,7 +124,7 @@ def create_playlist_artists_new_arrivals(
     df_artists_names = utils.read_csv_custom(
         config['datapath'], 'artists_names.csv')
     df_tracks = utils.read_csv_custom(config['datapath'], 'tracks.csv')
-    df_tracks_fav = utils.read_csv_custom(config['datapath'], 'tracks_fav.csv')
+    df_popularity = utils.read_csv_custom(config['datapath'], 'popularity.csv')
 
     date_of_interest = df_artists.sort_values(
         by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
@@ -114,9 +137,6 @@ def create_playlist_artists_new_arrivals(
     df_artists = df_artists[df_artists.id.isin(
         config['artists_followed'])]
 
-    # dropping tracks, that are already favourites
-    df_artists = df_artists[~df_artists.track_id.isin(df_tracks_fav.id)]
-
     # removing duplicates when looking at track_id
     df_artists.drop_duplicates(subset=['track_id'], inplace=True)
 
@@ -124,6 +144,13 @@ def create_playlist_artists_new_arrivals(
     df_artists = df_artists.join(
         df_tracks.set_index('id'), on='track_id', how='left')
     df_artists.drop_duplicates(subset=['name', 'artists'], inplace=True)
+
+    # dropping tracks, that are already favourites looking at track_name and artist
+    df_artists = drop_known_tracks(
+        df_to_be_cleaned=df_artists,
+        df_tracks=df_tracks,
+        df_popularity=df_popularity,
+    )
 
     len_before = len(df_artists)
     df_artists.dropna(subset=['track_id'], inplace=True)
@@ -136,14 +163,15 @@ def create_playlist_artists_new_arrivals(
                       'name': 'track_name'}, inplace=True)
     df_artists = df_artists.join(
         df_artists_names.set_index('id'), on='artist_id', how='left')
-    df_artists.to_csv(os.path.join(
-        config['datapath_playlists'], f'{date_of_interest} - from artists.csv'), ignore_index=True)
+    if not DEBUG:
+        df_artists.to_csv(os.path.join(
+            config['datapath_playlists'], f'{date_of_interest} - from artists.csv'), ignore_index=True)
 
-    # creating the playlist
-    playlist_id = sp.user_playlist_create(
-        user=connection['username'], name=playlist_name, public=True)['id']
-    # NOTE: possibly you can add a max of 100 tracks at once
-    sp.playlist_add_items(playlist_id, df_artists.track_id.tolist())
+        # creating the playlist
+        playlist_id = sp.user_playlist_create(
+            user=connection['username'], name=playlist_name, public=True)['id']
+        # NOTE: possibly you can add a max of 100 tracks at once
+        sp.playlist_add_items(playlist_id, df_artists.track_id.tolist())
 
 
 def main(args):
@@ -177,6 +205,14 @@ if __name__ == "__main__":
                         default='./config/spotiplaylist.yaml')
     parser.add_argument('-n', '--connection',
                         default='./config/connection.yaml')
+    parser.add_argument('-d', '--debug', default="False")
     args = parser.parse_args()
+    if args.debug.lower() == "true":
+        DEBUG = True
+    elif args.debug.lower() == "false":
+        DEBUG = False
+    else:
+        raise ValueError(
+            "Invalid input. Please provide 'True' or 'False' as the argument.")
     
     main(args)
