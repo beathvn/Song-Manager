@@ -10,6 +10,7 @@ import sys
 # 3rd party imports
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import pandas as pd
 
 
 def query_yes_no(question, default="yes"):
@@ -84,3 +85,29 @@ def get_auth_spotipy_obj(config: dict, scope: str) -> spotipy.Spotify:
         ),
     )
     return sp
+
+
+def read_csv_custom(data_folder: str, filename: str) -> pd.DataFrame:
+    """Function to execute the read_csv function from pandas 
+    with datetime for the appropriate columns
+
+    Args:
+        data_folder (str): folder where the data is stored
+        filename (str): file you want to read
+
+    Returns:
+        pd.DataFrame: loaded csv file as pandas dataframe
+    """
+    if filename in ['artists.csv', 'playlists.csv', 'tracks_fav.csv']:
+        df = pd.read_csv(os.path.join(data_folder, filename))
+        df.date_added = pd.to_datetime(df.date_added).dt.date
+        df.date_removed = pd.to_datetime(df.date_removed).dt.date
+        return df
+    elif filename == 'popularity.csv':
+        df = pd.read_csv(os.path.join(data_folder, filename))
+        df.date = pd.to_datetime(df.date).dt.date
+        return df
+    else:
+        # no conversion needs to be done
+        df = pd.read_csv(os.path.join(data_folder, filename))
+        return df

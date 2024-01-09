@@ -21,16 +21,12 @@ def create_playlist_playlists_new_arrivals(
         connection: dict,
         playlist_name: str,
 ):
-    df_playlists = pd.read_pickle(os.path.join(
-        config['datapath'], 'playlists.pickle'))
-    df_playlists_names = pd.read_pickle(os.path.join(
-        config['datapath'], 'playlists_names.pickle'))
-    df_popularity = pd.read_pickle(os.path.join(
-        config['datapath'], 'popularity.pickle'))
-    df_tracks = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks.pickle'))
-    df_tracks_fav = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks_fav.pickle'))
+    df_playlists = utils.read_csv_custom(config['datapath'], 'playlists.csv')
+    df_playlists_names = utils.read_csv_custom(
+        config['datapath'], 'playlists_names.csv')
+    df_popularity = utils.read_csv_custom(config['datapath'], 'popularity.csv')
+    df_tracks = utils.read_csv_custom(config['datapath'], 'tracks.csv')
+    df_tracks_fav = utils.read_csv_custom(config['datapath'], 'tracks_fav.csv')
 
     date_of_interest = df_playlists.sort_values(
         by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
@@ -85,8 +81,8 @@ def create_playlist_playlists_new_arrivals(
     df_playlists = df_playlists.join(
         df_playlists_names.set_index('id'), on='playlist_id', how='left')
     df_playlists.rename(columns={'name': 'playlist_name'}, inplace=True)
-    df_playlists.to_pickle(os.path.join(
-        config['datapath_playlists'], f'{date_of_interest} - from playlists.pickle'))
+    df_playlists.to_csv(os.path.join(
+        config['datapath_playlists'], f'{date_of_interest} - from playlists.csv'), ignore_index=True)
 
     # creating the playlist
     playlist_id = sp.user_playlist_create(
@@ -101,14 +97,11 @@ def create_playlist_artists_new_arrivals(
         config: dict,
         connection: dict,
 ):
-    df_artists_names = pd.read_pickle(os.path.join(
-        config['datapath'], 'artists_names.pickle'))
-    df_artists = pd.read_pickle(os.path.join(
-        config['datapath'], 'artists.pickle'))
-    df_tracks = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks.pickle'))
-    df_tracks_fav = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks_fav.pickle'))
+    df_artists = utils.read_csv_custom(config['datapath'], 'artists.csv')
+    df_artists_names = utils.read_csv_custom(
+        config['datapath'], 'artists_names.csv')
+    df_tracks = utils.read_csv_custom(config['datapath'], 'tracks.csv')
+    df_tracks_fav = utils.read_csv_custom(config['datapath'], 'tracks_fav.csv')
 
     date_of_interest = df_artists.sort_values(
         by=['date_added'], inplace=False, ascending=False).iloc[0].date_added
@@ -143,8 +136,8 @@ def create_playlist_artists_new_arrivals(
                       'name': 'track_name'}, inplace=True)
     df_artists = df_artists.join(
         df_artists_names.set_index('id'), on='artist_id', how='left')
-    df_artists.to_pickle(os.path.join(
-        config['datapath_playlists'], f'{date_of_interest} - from artists.pickle'))
+    df_artists.to_csv(os.path.join(
+        config['datapath_playlists'], f'{date_of_interest} - from artists.csv'), ignore_index=True)
 
     # creating the playlist
     playlist_id = sp.user_playlist_create(

@@ -16,11 +16,11 @@ import helpers.utils as utils
 def create(config: dict):
 
     def create_table(table_name, columns):
-        outpath = os.path.join(config['datapath'], f'{table_name}.pickle')
+        outpath = os.path.join(config['datapath'], f'{table_name}.csv')
         if os.path.exists(outpath):
             raise ValueError(
                 f'File {outpath} already exists. Delete it or run with mode "update"')
-        pd.DataFrame(columns=columns).to_pickle(outpath)
+        pd.DataFrame(columns=columns).to_csv(outpath, index=False)
 
     create_table('tracks', ['id', 'name', 'artists', 'preview_url'])
     create_table('tracks_fav', ['id', 'date_added', 'date_removed'])
@@ -42,8 +42,9 @@ def _update_playlists_names(sp: spotipy.Spotify, config: dict, connection: dict)
     df_playlists_names = df_playlists_names[df_playlists_names.id.isin(
         list(config['playlist_to_allowed_tracks'].keys())
     )].reset_index(drop=True)
-    df_playlists_names.to_pickle(os.path.join(
-        config['datapath'], 'playlists_names.pickle')
+    df_playlists_names.to_csv(os.path.join(
+        config['datapath'], 'playlists_names.csv'),
+        index=False
     )
 
 
@@ -53,8 +54,8 @@ def _update_artists_names(sp: spotipy.Spotify, config: dict):
     for id in tqdm(config['artists_followed'], desc='Gettings artists names'):
         artists_names['id'].append(id)
         artists_names['name'].append(sp.artist(artist_id=id)['name'])
-    pd.DataFrame(artists_names).to_pickle(
-        os.path.join(config['datapath'], 'artists_names.pickle'))
+    pd.DataFrame(artists_names).to_csv(
+        os.path.join(config['datapath'], 'artists_names.csv'), index=False)
 
 
 def _drop_trackid_duplicates(df: pd.DataFrame):
@@ -236,20 +237,17 @@ def update(config: dict, connection: dict):
     _update_playlists_names(sp, config, connection)
     _update_artists_names(sp, config)
 
-    df_tracks = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks.pickle'))
+    df_tracks = utils.read_csv_custom(config['datapath'], 'tracks.csv')
     tracks_to_add = {'id': [], 'name': [], 'artists': [], 'preview_url': []}
 
-    df_popularity = pd.read_pickle(os.path.join(
-        config['datapath'], 'popularity.pickle'))
+    df_popularity = utils.read_csv_custom(config['datapath'], 'popularity.csv')
     popularity_to_add = {'id': [], 'date': [], 'value': []}
 
     ############ playlists and artists table ############
 
-    df_playlists = pd.read_pickle(os.path.join(
-        config['datapath'], 'playlists.pickle'))
-    df_playlists_names = pd.read_pickle(os.path.join(
-        config['datapath'], 'playlists_names.pickle'))
+    df_playlists = utils.read_csv_custom(config['datapath'], 'playlists.csv')
+    df_playlists_names = utils.read_csv_custom(
+        config['datapath'], 'playlists_names.csv')
 
     df_playlists, tracks_to_add, popularity_to_add = _update_grouped_table(
         df_names=df_playlists_names,
@@ -262,13 +260,12 @@ def update(config: dict, connection: dict):
         mode='playlists',
         connection=connection,
     )
-    df_playlists.to_pickle(os.path.join(
-        config['datapath'], 'playlists.pickle'))
+    df_playlists.to_csv(os.path.join(
+        config['datapath'], 'playlists.csv'), index=False)
 
-    df_artists = pd.read_pickle(os.path.join(
-        config['datapath'], 'artists.pickle'))
-    df_artists_names = pd.read_pickle(os.path.join(
-        config['datapath'], 'artists_names.pickle'))
+    df_artists = utils.read_csv_custom(config['datapath'], 'artists.csv')
+    df_artists_names = utils.read_csv_custom(
+        config['datapath'], 'artists_names.csv')
 
     df_artists, tracks_to_add, popularity_to_add = _update_grouped_table(
         df_names=df_artists_names,
@@ -281,11 +278,11 @@ def update(config: dict, connection: dict):
         mode='artists',
         connection=connection,
     )
-    df_artists.to_pickle(os.path.join(config['datapath'], 'artists.pickle'))
+    df_artists.to_csv(os.path.join(
+        config['datapath'], 'artists.csv'), index=False)
 
     ############ tracks_fav table ############
-    df_tracks_fav = pd.read_pickle(os.path.join(
-        config['datapath'], 'tracks_fav.pickle'))
+    df_tracks_fav = utils.read_csv_custom(config['datapath'], 'tracks_fav.csv')
 
     df_tracks_fav, tracks_to_add, popularity_to_add = _update_tracks_fav(
         df_tracks_fav=df_tracks_fav,
@@ -295,20 +292,19 @@ def update(config: dict, connection: dict):
         df_tracks=df_tracks,
         sp=sp,
     )
-    df_tracks_fav.to_pickle(os.path.join(
-        config['datapath'], 'tracks_fav.pickle'))
+    df_tracks_fav.to_csv(os.path.join(
+        config['datapath'], 'tracks_fav.csv'), index=False)
 
     ############ writing tracks and popularity table ############
     pd.concat([
         df_popularity,
         pd.DataFrame(popularity_to_add)],
-        ignore_index=True).to_pickle(os.path.join(config['datapath'], 'popularity.pickle'))
+        ignore_index=True).to_csv(os.path.join(config['datapath'], 'popularity.csv'), index=False)
 
     pd.concat([
         df_tracks,
         pd.DataFrame(tracks_to_add)],
-        ignore_index=True).to_pickle(os.path.join(config['datapath'], 'tracks.pickle'))
-
+        ignore_index=True).to_csv(os.path.join(config['datapath'], 'tracks.csv'), index=False)
 
 if __name__ == "__main__":
     print('Start of program: dataset.py...')
