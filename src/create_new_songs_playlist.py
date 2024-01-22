@@ -30,7 +30,7 @@ def drop_known_tracks(
         ' ' + df_to_be_cleaned.artists
     df_to_be_cleaned = df_to_be_cleaned[~df_to_be_cleaned.name_artists.isin(
         df_popularity.name_artists)]
-    df_to_be_cleaned.drop(columns=['name_artists'], inplace=True)
+    df_to_be_cleaned = df_to_be_cleaned.drop(columns=['name_artists'])
     return df_to_be_cleaned
 
 
@@ -105,7 +105,7 @@ def create_playlist_playlists_new_arrivals(
     df_playlists.rename(columns={'name': 'playlist_name'}, inplace=True)
     if not DEBUG:
         df_playlists.to_csv(os.path.join(
-            config['datapath_playlists'], f'{date_of_interest} - from playlists.csv'), ignore_index=True)
+            config['datapath_playlists'], f'{date_of_interest} - from playlists.csv'))
 
         # creating the playlist
         playlist_id = sp.user_playlist_create(
@@ -165,7 +165,7 @@ def create_playlist_artists_new_arrivals(
         df_artists_names.set_index('id'), on='artist_id', how='left')
     if not DEBUG:
         df_artists.to_csv(os.path.join(
-            config['datapath_playlists'], f'{date_of_interest} - from artists.csv'), ignore_index=True)
+            config['datapath_playlists'], f'{date_of_interest} - from artists.csv'))
 
         # creating the playlist
         playlist_id = sp.user_playlist_create(
