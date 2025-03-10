@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "songmanager"
+version = "0.0.1"
+description = ""
+authors = ["Lukas Ellemunt"]
+readme = "Readme.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+pandas = "^2.2.3"
+colorlog = "^6.9.0"
+pyyaml = "^6.0.2"
+xmltodict = "^0.14.2"
+httpx = "<0.28"
+spotdl = "^4.2.11"
+tqdm = "^4.67.1"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

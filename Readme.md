@@ -1,5 +1,5 @@
 # Song-Manager
-Important notice: bevore using this project: See **Disclaimer** at the end of this document.
+Important notice: bevore using this project: See **[Disclaimer](#disclaimer)** at the end of this document.
 
 This project provides the following main funcionalities:
 1. Downloading songs from a given spotify playlist using ytmdl https://github.com/deepjyoti30/ytmdl
@@ -58,6 +58,23 @@ Simply execute the **sync_folders.py** script with the program arguments you wan
 ### Normalize Audio
 Execute the **normalize_audio.py** script to normalize the audio files using pydub (https://github.com/jiaaro/pydub) found in folder A and save the normalized audio files in folder B. Both folder A and B are given to the program via program argument.
 **ATTENTION:** This script converts songs in the .m4a format to the .mp3 format. This is because pydub cannot handle the .m4a files. Why is that a problem? Because you can have a folder containing both a FILENAME.mp3 and a FILENAME.m4a file, that are actually two totally different songs. If you now use the normalize_audio.py script to normalize the FILENAME.m4a because it is very quiete and put it back in your folder, it will ask you if you want to replace the file, since FILENAME.mp3 already exists. But the FILENAME.mp3 is not the file you want to replace, since it is a totally different song. You need to delete the FILENAME.m4a file in your folder manually, place the newly created and normalized FILENAME.mp3 into the folder and select "keep both". Afterwards, you need to go (again manually - sorry for that) into the xml file of rekordbox and change manually the '@Location' key of the FILENAME.m4a to the new file. Sadly you cannot use the relocate button in rekordbox, since it lets you only relocate files from the same format.
+
+## use spotdl
+
+Forget about ytmdl, use spotdl. When using this devcontainer the local Downloads folder is mounted in the container itself, so it should work right away
+```bash
+spotdl YOUTUBE_URL|SPOTIFY_URL --output ~/Downloads
+spotdl SPOTIFY_PLAYLIST_URL --output ~/Downloads
+```
+
+## Project structure
+Started to break the project into a frontend and backend. Having seperate folders and let them talk using an API is overkill. So having the backend `TrackMind` also in the frontend folder.
+
+## Version History
+
+### Soundportal
+
+### Trackmind
 
 # Disclaimer
 This project is provided "as is", without express or implied warranties of any kind. The author assumes no responsibility or liability for the use of this project or for the accuracy, reliability, or timeliness of the information contained herein. Any actions taken based on this project or the information provided therein are done so at the user's own risk.

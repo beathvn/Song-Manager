@@ -1,0 +1,81 @@
+{ // https://github.com/devcontainers/images/tree/main/src/python/.devcontainer
+    "name": "Python 3",
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": ".",
+        "args": {
+            "VARIANT": "3.12-bullseye"
+        }
+    },
+    "runArgs": [
+        "--network=host"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": { // https://github.com/devcontainers/features/tree/main/src/common-utils
+            "installZsh": "true", // by default, zsh is installed, also oh-my-zsh
+            "username": "vscode",
+            "userUid": "1000",
+            "userGid": "1000",
+            "upgradePackages": "true"
+        },
+        "ghcr.io/devcontainers/features/git:1": { // https://github.com/devcontainers/features/tree/main/src/git
+            "version": "latest",
+            "ppa": "false"
+        },
+        "ghcr.io/devcontainers-extra/features/ffmpeg-apt-get:1": {}, // needed for spotdl
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/Downloads,target=/home/vscode/Downloads,type=bind"
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // "files.exclude": { // if you want to see the .git folder (f.ex. for the per commit hooks understanding)
+                //     "**/.git": false
+                // },
+                "python.defaultInterpreterPath": "./.venv/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true
+                },
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "bash",
+                        "icon": "terminal-bash"
+                    },
+                    "zsh": {
+                        "path": "zsh"
+                    },
+                    "fish": {
+                        "path": "fish"
+                    },
+                    "tmux": {
+                        "path": "tmux",
+                        "icon": "terminal-tmux"
+                    },
+                    "pwsh": {
+                        "path": "pwsh",
+                        "icon": "terminal-powershell"
+                    }
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "github.copilot",
+                "github.copilot-chat",
+                "mhutchie.git-graph",
+                "eamodio.gitlens",
+                "tamasfe.even-better-toml",
+                "ms-toolsai.jupyter",
+                "gruntfuggly.todo-tree"
+            ]
+        }
+    },
+    "remoteUser": "vscode",
+    "postCreateCommand": "bash ./.devcontainer/post-create.sh"
+}
