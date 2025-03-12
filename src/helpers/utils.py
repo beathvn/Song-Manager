@@ -58,37 +58,29 @@ def open_file(filepath: str) -> None:
         subprocess.call(("xdg-open", filepath))
 
 
-def get_auth_spotipy_obj(
-    client_id: str,
-    client_secret: str,
-    redirect_uri: str,
-    scope: str,
-) -> spotipy.Spotify:
-    """Create spotipy object from given client_id, client_secret, redirect_uri and scope
-
-    Args:
-        client_id (str): Spotify client ID
-        client_secret (str): Spotify client secret
-        redirect_uri (str): Spotify redirect URI
-        scope (str): Spotify API scope
-
-    Returns:
-        spotipy.Spotify: Authenticated Spotipy object
+def get_auth_spotipy_obj(config: dict, scope: str) -> spotipy.Spotify:
+    """Create spotipy object from given username and environmental
+    SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and SPOTIPY_REDIRECT_URI
     """
 
-    if not client_id:
+    # getting the environmental variables
+    client_id = config["client_id"]
+    client_secret = config["client_secret"]
+    redirect_uri = config["redirect_uri"]
+
+    if client_id is None:
         raise Exception("SPOTIPY_CLIENT_ID not provided")
-    elif not client_secret:
+    elif client_secret is None:
         raise Exception("SPOTIPY_CLIENT_SECRET not provided")
-    elif not redirect_uri:
+    elif redirect_uri is None:
         raise Exception("SPOTIPY_REDIRECT_URI not provided")
 
     sp = spotipy.Spotify(
         auth_manager=SpotifyOAuth(
             scope=scope,
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri=redirect_uri,
+            client_id=config["client_id"],
+            client_secret=config["client_secret"],
+            redirect_uri=config["redirect_uri"],
         ),
     )
     return sp

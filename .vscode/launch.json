@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "current file",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "update dataset",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/streaming/dataset.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--mode",
+                "update"
+            ]
+        },
+        {
+            "name": "create new songs playlist",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/streaming/create_new_songs_playlist.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+        },
+    ]
+}

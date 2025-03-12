@@ -2,6 +2,9 @@
 from argparse import ArgumentParser
 import os
 import math
+import sys
+
+sys.path.append("./src")
 
 # 3rd party imports
 import pandas as pd
@@ -221,9 +224,11 @@ def _update_tracks_fav(
 
             popularity_to_add, tracks_to_add = _update_popularity_and_tracks_dicts(
                 df_popularity, df_tracks, popularity_to_add, tracks_to_add, current_track, today)
-
-    df_tracks_fav = pd.concat(
-        [df_tracks_fav, pd.DataFrame(track_fav_to_add)], ignore_index=True)
+    df_tracks_fav_to_add = pd.DataFrame(track_fav_to_add)
+    df_tracks_fav_to_add["date_added"] = pd.to_datetime(
+        df_tracks_fav_to_add["date_added"]
+    ).dt.date
+    df_tracks_fav = pd.concat([df_tracks_fav, df_tracks_fav_to_add], ignore_index=True)
     df_tracks_fav.date_added = pd.to_datetime(df_tracks_fav.date_added).dt.date
     df_tracks_fav.date_removed = pd.to_datetime(
         df_tracks_fav.date_removed).dt.date

@@ -5,6 +5,9 @@
 from argparse import ArgumentParser
 from datetime import datetime
 import os
+import sys
+
+sys.path.append("./src")
 
 # 3rd party imports
 import pandas as pd
