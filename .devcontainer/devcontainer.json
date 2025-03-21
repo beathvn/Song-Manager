@@ -72,7 +72,9 @@
                 "eamodio.gitlens",
                 "tamasfe.even-better-toml",
                 "ms-toolsai.jupyter",
-                "gruntfuggly.todo-tree"
+                "gruntfuggly.todo-tree",
+                "yzhang.markdown-all-in-one",
+                "davidanson.vscode-markdownlint"
             ]
         }
     },
