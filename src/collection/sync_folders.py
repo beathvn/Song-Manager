@@ -4,8 +4,11 @@
 
 # system imports
 from argparse import ArgumentParser
-import os
 from datetime import datetime
+import os
+import sys
+
+sys.path.append("./src")
 
 # 3rd party imports
 from dirsync import sync
@@ -32,7 +35,7 @@ def update_versions_txt(version_file: str, folder_name: str) -> None:
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     # Read the contents of the text file into a list
-    with open(version_file, 'rt') as file:
+    with open(version_file, "rt") as file:
         lines = file.readlines()
 
     did_change = False
@@ -47,36 +50,50 @@ def update_versions_txt(version_file: str, folder_name: str) -> None:
 
     if not did_change:
         raise ValueError(
-            f'Folder name "{folder_name}" not found in text file. Check spelling!')
+            f'Folder name "{folder_name}" not found in text file. Check spelling!'
+        )
     else:
         logger.info(f'Updated "{folder_name}" to "{current_date}"')
 
     # Write the modified list back to the text file
-    with open(version_file, 'wt') as file:
+    with open(version_file, "wt") as file:
         file.writelines(lines)
 
 
 def sync_folders(master_folder: str, slave_folder: str):
-    sync(master_folder, slave_folder, 'sync', verbose=True, ignore=['\.'], logger=logger, purge=True)
+    sync(
+        master_folder,
+        slave_folder,
+        "sync",
+        verbose=True,
+        ignore=["\."],
+        logger=logger,
+        purge=True,
+    )
 
 
-def main(args):    
-    logger.info('Start of program: sync_folders.py...')
+def main(args):
+    logger.info("Start of program: sync_folders.py...")
     sync_folders(args.master_folder, args.slave_folder)
 
-    if args.master_folder.endswith('Music Collection'):
-        update_versions_txt(version_file=os.path.join(
-            os.path.dirname(args.slave_folder), 'Versions.txt'), folder_name='Music Collection')
+    if args.master_folder.endswith("Music Collection"):
+        update_versions_txt(
+            version_file=os.path.join(
+                os.path.dirname(args.slave_folder), "Versions.txt"
+            ),
+            folder_name="Music Collection",
+        )
     else:
         logger.warning(
-            'Syncing folder is not "Music Collection". Not updating Versions.txt')
-    logger.info('End of program: sync_folders.py\n')
+            'Syncing folder is not "Music Collection". Not updating Versions.txt'
+        )
+    logger.info("End of program: sync_folders.py\n")
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-m', '--master_folder')
-    parser.add_argument('-s', '--slave_folder')
+    parser.add_argument("-m", "--master_folder")
+    parser.add_argument("-s", "--slave_folder")
 
     args = parser.parse_args()
     main(args)

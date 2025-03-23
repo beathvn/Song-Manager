@@ -12,8 +12,6 @@ poetry install
 echo "cloning zsh plugins"
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-echo "cloning ytmdl"
-git clone https://github.com/beathvn/ytmdl.git ~/ytmdl
 
 plugins="zsh-autosuggestions zsh-syntax-highlighting"
 for plugin in $plugins; do
@@ -27,3 +25,6 @@ done
 
 echo "Setting ZSH_THEME"
 sed -i 's/^ZSH_THEME=.*/ZSH_THEME="steeef"/' ~/.zshrc
+
+# we need to do this, otherwise, we cannot install dirsync
+git config --global --add safe.directory /workspaces/Song-Manager/.venv/src/dirsync

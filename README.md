@@ -20,4 +20,32 @@ The documentation is split up into several sections. See the table of contents b
 
 ## Getting started
 
-To get anything working it is suggested to use the configured devcontainer. If you don't know how to do that, check [this](https://code.visualstudio.com/docs/devcontainers/containers) out.
+### Dev Container
+
+For some features (no local folder mounts required) you can use devcontainer. To learn more about that, check [this](https://code.visualstudio.com/docs/devcontainers/containers) out.
+
+### Local machine (tested only on MacOS)
+
+Some features require you run them on your local machine.
+make sure that you have `poetry` installed - you can install that with [brew](https://brew.sh). Then make sure you configure the virtual environmen in the project with:
+
+```bash
+poetry config virtualenvs.in-project true
+```
+
+Then install the dependencies with:
+
+```bash
+poetry install
+```
+
+This will install all dependencies in the `.venv` folder in the project root.
+
+> [!NOTE]
+> make sure in your terminal, that the correct python version is used. Run `which python` and make sure that points to the python binary in the `.venv` folder.
+> If not, you can try to put this `export PATH=".venv/bin:$PATH"` into your `.zshrc` or `.bashrc` file.
+
+Then you can just run the scripts on your mac, by double clicking them in the Finder.
+
+> [!NOTE]
+> Make a script executable with this command `chmod +x script.sh`

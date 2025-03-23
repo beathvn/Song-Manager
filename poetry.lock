@@ -440,6 +440,22 @@ wrapt = ">=1.10,<2"
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "setuptools ; python_version >= \"3.12\"", "tox"]
 
 [[package]]
+name = "dirsync"
+version = "2.2.6.dev0+66e938"
+description = "Advanced directory tree synchronisation tool"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = []
+develop = false
+
+[package.source]
+type = "git"
+url = "https://github.com/beathvn/dirsync.git"
+reference = "develop"
+resolved_reference = "66e93878afa4981c09f3db2ff73523acad106e0e"
+
+[[package]]
 name = "executing"
 version = "2.2.0"
 description = "Get the currently executing AST node of a frame, and other information"
@@ -2215,4 +2231,4 @@ requests = ">=2.22"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "bd129ef5cbccb1048e80f691f1ffc36800546665bdb6839cd1ce12e67f32f57e"
+content-hash = "015c390fea7ca4060e460df624b2bda0605715d1e175276cdba774000278a893"
