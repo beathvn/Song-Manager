@@ -33,9 +33,15 @@ Before you start, there is a few things you need to setup:
 
 ## Usage
 
-Once you have the [initial setup](#initial-setup) done, the easiest way to use the spotify functionalities is to open the project in a devcontainer in vscode.
+Once you have the [initial setup](#initial-setup) done (and hav the project open in devcontainer you can use it like this:)
 
-For the 'new arrival playlist', you need to initialize the databse (this needs to be done only once). For that run the script XX. # TODO: create init script (need to create csv files, run dataset script in create mode)
+- **new arrival playlists**: for every script make sure you have the virtual environment activated and you are in the root of the project with the shell.
+  - to initialize the database (this needs to be done only once), run `XX` # TODO: create init script
+  - to create the new arrival playlists, run
+
+    ```bash
+    ./scripts/create_new_arrivals_playlists.sh
+    ```
 
 todo # TODO: create the necessary scripts
 

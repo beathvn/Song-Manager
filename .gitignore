@@ -1,10 +1,9 @@
 # Folders
 data/
 logs/
-scripts/
+scripts/*
 *__pycache__
 tutorials
-env/
 .venv/
 
 # files
@@ -16,3 +15,6 @@ spotiplaylist.yaml
 connection.yaml
 *.pdf
 *.ipynb
+
+# include files
+!scripts/create_new_arrivals_playlists.sh
