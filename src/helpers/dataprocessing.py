@@ -1,11 +1,20 @@
 # This scripts holds different functions to help processing different data
 
+# system imports
+import logging
+import sys
+
+sys.path.append("./src")
 
 # 3rd party imports
 import pandas as pd
 
 # user imports
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def adding_pre_and_post_str(pre: str, post: str, my_list: list)-> list:

@@ -4,10 +4,14 @@
 
 # system imports
 from argparse import ArgumentParser
+import logging
 
 # user imports
 from helpers.RB_handler import RB_handler_five_six
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def main(args):

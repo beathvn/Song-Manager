@@ -3,14 +3,19 @@
 
 
 # system imports
-import os
-from datetime import date
+import logging
+import sys
+
+sys.path.append("./src")
 
 # 3rd party imports
 import xmltodict
 
 # user imports
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 class RB_handler():

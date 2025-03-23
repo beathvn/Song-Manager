@@ -7,12 +7,16 @@
 
 # system imports
 from argparse import ArgumentParser
+import logging
 import sys
 
 sys.path.append("./src")
 # user imports
 from helpers.RB_handler import RB_handler
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def main(args):

@@ -8,6 +8,7 @@
 # system imports
 from argparse import ArgumentParser
 from datetime import datetime
+import logging
 import os
 import sys
 sys.path.append('../src/')
@@ -17,9 +18,11 @@ import pandas as pd
 
 # user imports
 import helpers.dataloading as dataloading
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
 import helpers.utils as utils
 
+setup_logging()
+logger = logging.getLogger(__name__)
 
 def drop_by_columns(new_file: pd.DataFrame, old_file: pd.DataFrame, columns_to_reimport: list, columns_to_delete_and_reimport: list):
     df_reimport = pd.concat([new_file, old_file], axis=0).drop_duplicates(subset=columns_to_reimport, keep=False)

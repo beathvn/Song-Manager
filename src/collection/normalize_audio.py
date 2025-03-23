@@ -6,6 +6,7 @@
 
 # system imports
 from argparse import ArgumentParser
+import logging
 import os
 import shutil
 import sys
@@ -19,8 +20,11 @@ from tqdm import tqdm
 import pandas as pd
 
 # user imports
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
 import helpers.dataloading as dataloading
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def copy_leise_songs_to_directory(xml_file: str, destination_folder: str, keyword: str):

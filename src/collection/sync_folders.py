@@ -5,6 +5,7 @@
 # system imports
 from argparse import ArgumentParser
 from datetime import datetime
+import logging
 import os
 import sys
 
@@ -14,7 +15,10 @@ sys.path.append("./src")
 from dirsync import sync
 
 # user imports
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def update_versions_txt(version_file: str, folder_name: str) -> None:

@@ -4,11 +4,14 @@
 
 # system imports
 from argparse import ArgumentParser
+import logging
 
 # user imports
 import helpers.dataloading as dataloading
-import helpers.utils as utils
-from helpers.logger import logger
+from helpers.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def main(args):
