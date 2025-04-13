@@ -16,6 +16,7 @@ httpx = "<0.28"
 spotdl = "^4.2.11"
 tqdm = "^4.67.1"
 dirsync = {git = "https://github.com/beathvn/dirsync.git", rev = "develop"}
+streamlit = "^1.44.1"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"

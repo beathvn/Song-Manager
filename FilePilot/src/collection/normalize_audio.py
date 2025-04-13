@@ -20,8 +20,8 @@ from tqdm import tqdm
 import pandas as pd
 
 # user imports
-from helpers.logging_config import setup_logging
-import helpers.dataloading as dataloading
+from shared.logging_config import setup_logging
+import shared.dataloading as dataloading
 
 setup_logging()
 logger = logging.getLogger(__name__)

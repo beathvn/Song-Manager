@@ -10,10 +10,25 @@ import spotipy
 import xmltodict
 
 
-def load_yaml(filepath: str):
+def load_yaml(filepath: str) -> dict:
     with open(filepath, encoding="utf-8") as file:
         config = yaml.safe_load(file)
     return config
+
+
+def write_yaml(filepath: str, data: dict) -> None:
+    """
+    Writes data to a YAML file.
+
+    Args:
+        filepath (str): The path to the YAML file.
+        data (dict): The data to write to the file.
+
+    Returns:
+        None
+    """
+    with open(filepath, 'w', encoding='utf-8') as file:
+        yaml.dump(data, file, default_flow_style=False)
 
 
 def load_dataframe_from_rekordbox_xml(filepath: str) -> pd.DataFrame:

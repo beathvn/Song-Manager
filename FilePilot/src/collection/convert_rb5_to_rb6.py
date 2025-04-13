@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 import logging
 
 # user imports
-from helpers.RB_handler import RB_handler_five_six
-from helpers.logging_config import setup_logging
+from shared.RB_handler import RB_handler_five_six
+from shared.logging_config import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)

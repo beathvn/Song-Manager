@@ -12,7 +12,7 @@ sys.path.append("./src")
 import xmltodict
 
 # user imports
-from helpers.logging_config import setup_logging
+from shared.logging_config import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)

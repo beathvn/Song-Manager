@@ -17,9 +17,9 @@ sys.path.append('../src/')
 import pandas as pd
 
 # user imports
-import helpers.dataloading as dataloading
-from helpers.logging_config import setup_logging
-import helpers.utils as utils
+import shared.dataloading as dataloading
+from shared.logging_config import setup_logging
+import shared.utils as utils
 
 setup_logging()
 logger = logging.getLogger(__name__)

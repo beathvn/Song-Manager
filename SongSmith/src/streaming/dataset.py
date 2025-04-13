@@ -12,8 +12,8 @@ import spotipy
 from tqdm import tqdm
 
 # user imports
-import helpers.dataloading as dataloading
-import helpers.utils as utils
+import shared.dataloading as dataloading
+import shared.utils as utils
 
 
 def create(config: dict):

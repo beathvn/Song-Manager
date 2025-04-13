@@ -21,5 +21,17 @@
             "console": "integratedTerminal",
             "justMyCode": true,
         },
+        {
+            "name": "FilePilot Frontend",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "FilePilot/src/welcome.py",
+                "--server.port",
+                "8080"
+            ],
+        },
     ]
 }

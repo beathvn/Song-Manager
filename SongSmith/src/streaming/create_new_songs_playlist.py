@@ -14,8 +14,8 @@ import pandas as pd
 import spotipy
 
 # user imports
-import helpers.dataloading as dataloading
-import helpers.utils as utils
+import shared.dataloading as dataloading
+import shared.utils as utils
 
 
 def drop_known_tracks(

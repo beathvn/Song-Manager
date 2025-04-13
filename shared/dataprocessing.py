@@ -10,7 +10,7 @@ sys.path.append("./src")
 import pandas as pd
 
 # user imports
-from helpers.logging_config import setup_logging
+from shared.logging_config import setup_logging
 
 
 setup_logging()

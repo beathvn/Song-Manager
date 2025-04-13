@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 import logging
 
 # user imports
-import helpers.dataloading as dataloading
-from helpers.logging_config import setup_logging
+import shared.dataloading as dataloading
+from shared.logging_config import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)
