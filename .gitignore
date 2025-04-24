@@ -15,6 +15,8 @@ spotiplaylist.yaml
 connection.yaml
 *.pdf
 *.ipynb
+*.env
+*.csv
 
 # include files
 !scripts/create_new_arrivals_playlists.sh

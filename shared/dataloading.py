@@ -27,8 +27,24 @@ def write_yaml(filepath: str, data: dict) -> None:
     Returns:
         None
     """
-    with open(filepath, 'w', encoding='utf-8') as file:
+    with open(filepath, "w", encoding="utf-8") as file:
         yaml.dump(data, file, default_flow_style=False)
+
+
+def write_yaml(filepath: str, data_dict: dict) -> None:
+    """
+    Writes data to a YAML file.
+
+    Args:
+        filepath (str): The path to the YAML file.
+        data_dict (dict): The data to write to the file.
+
+    Returns:
+        None
+    """
+    # Write the dictionary to a YAML file
+    with open(filepath, "w", encoding="utf-8") as file:
+        yaml.dump(data_dict, file, default_flow_style=False)
 
 
 def load_dataframe_from_rekordbox_xml(filepath: str) -> pd.DataFrame:
