@@ -11,6 +11,7 @@ import sys
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import pandas as pd
+from dotenv import load_dotenv
 
 
 def query_yes_no(question, default="yes"):
@@ -58,15 +59,14 @@ def open_file(filepath: str) -> None:
         subprocess.call(("xdg-open", filepath))
 
 
-def get_auth_spotipy_obj(config: dict, scope: str) -> spotipy.Spotify:
+def get_auth_spotipy_obj(path_env_file: str, scope: str) -> spotipy.Spotify:
     """Create spotipy object from given username and environmental
     SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET and SPOTIPY_REDIRECT_URI
     """
-
-    # getting the environmental variables
-    client_id = config["client_id"]
-    client_secret = config["client_secret"]
-    redirect_uri = config["redirect_uri"]
+    load_dotenv(path_env_file, override=True)
+    client_id = os.environ.get("SPOTIPY_CLIENT_ID")
+    client_secret = os.environ.get("SPOTIPY_CLIENT_SECRET")
+    redirect_uri = os.environ.get("SPOTIPY_REDIRECT_URI")
 
     if client_id is None:
         raise Exception("SPOTIPY_CLIENT_ID not provided")
@@ -78,9 +78,9 @@ def get_auth_spotipy_obj(config: dict, scope: str) -> spotipy.Spotify:
     sp = spotipy.Spotify(
         auth_manager=SpotifyOAuth(
             scope=scope,
-            client_id=config["client_id"],
-            client_secret=config["client_secret"],
-            redirect_uri=config["redirect_uri"],
+            client_id=client_id,
+            client_secret=client_secret,
+            redirect_uri=redirect_uri,
         ),
     )
     return sp

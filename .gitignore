@@ -17,6 +17,8 @@ connection.yaml
 *.ipynb
 *.env
 *.csv
+*.json
+*.parquet
 
 # include files
 !scripts/create_new_arrivals_playlists.sh

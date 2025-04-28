@@ -33,5 +33,17 @@
                 "8080"
             ],
         },
+        {
+            "name": "SongSmith Frontend",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "SongSmith/src/app.py",
+                "--server.port",
+                "8081"
+            ]
+        },
     ]
 }
