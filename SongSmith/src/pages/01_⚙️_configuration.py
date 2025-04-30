@@ -1,11 +1,11 @@
 # system imports
+from datetime import datetime
+import math
 import os
-from datetime import date
 
 # 3rd party imports
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from typing import Callable
@@ -103,6 +103,9 @@ if "playlists_autopopulated" not in st.session_state:
 
 if "artists_autopopulated" not in st.session_state:
     st.session_state.artists_autopopulated = None
+
+if "tracks" not in st.session_state:
+    st.session_state.tracks = None
 
 ###############################################################
 ################# main functionality ##########################
@@ -295,5 +298,50 @@ if st.button(
     help="This will create a new tracks table based on your favorites - disabled on missing infos",
     disabled=disable_init_tracks,
 ):
-    # TODO: when i don't have the parquet file, i can't start working...
-    pass
+    sp = _get_spotify_obj(user, "user-library-read")
+    total_tracks = sp.current_user_saved_tracks(limit=1, offset=0)["total"]
+
+    # 50 is the max amount you can fetch in a single request
+    request_limit = 50
+    iterations = math.ceil(total_tracks / request_limit)
+
+    results = []
+
+    pb = st.progress(0, "Fetching your saved tracks...")
+    for curr_iteration in range(iterations):
+        track_results = sp.current_user_saved_tracks(
+            limit=request_limit, offset=curr_iteration * request_limit)
+        results += track_results['items']
+        pb.progress((curr_iteration + 1) / iterations, f"Fetching your saved tracks...")
+    
+    pb.empty()
+    
+    tracks_list = [Track(
+        id=track["track"]["id"],
+        name=track["track"]["name"],
+        artist_ids=[artist["id"] for artist in track["track"]["artists"]],
+        artist_names=[artist["name"] for artist in track["track"]["artists"]],
+        date_added=datetime.strptime(track["added_at"], "%Y-%m-%dT%H:%M:%SZ").date(),
+        added_from="favorites"
+    ) for track in results]
+
+    df = pd.DataFrame([vars(track) for track in tracks_list])
+    st.session_state.tracks = df
+    st.toast("Tracks table created successfully!", icon="✅")
+
+if st.session_state.tracks is not None:
+    df_tracks = st.session_state.tracks
+    st.dataframe(
+        df_tracks,
+        use_container_width=True,
+        hide_index=True,
+    )
+    st.download_button(
+        "⬇️ Download tracks table",
+        df_tracks.to_parquet(index=False),
+        file_name=f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_tracks.parquet",
+        mime="application/parquet",
+        help="This will download the current tracks table as a parquet file.",
+        use_container_width=True,
+        type="primary",
+    )

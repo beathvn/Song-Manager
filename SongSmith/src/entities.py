@@ -56,7 +56,8 @@ class User(BaseModel):
 class Track(BaseModel):
     id: str
     name: str
-    artists: list[str]
+    artist_ids: list[str]
+    artist_names: list[str]
     date_added: date
     added_from: str
     """playlist id, artist id or favorites when added from favorites"""
