@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from typing import Callable
 
 # user imports
 from entities import *
@@ -51,6 +52,37 @@ def get_artist_id_name(user: User, artist_url: str) -> tuple[str, str]:
     except Exception as e:
         st.error(f"Error fetching artist: {e}")
         return None, None
+
+
+def _autopopulate_table(
+    df: pd.DataFrame,
+    item_type: str,
+    get_id_name_fn: Callable[[User, str], tuple[str, str]],
+    user: User,
+    editor_key: str,
+    auto_state: str,
+    key_delta: int,
+):
+    if df.isnull().values.any():
+        if df["allowed_tracks"].isnull().any() or df["url"].isnull().any():
+            st.toast("can just autopopulate **name** and **id**", icon="⚠️")
+        else:
+            pb = st.progress(0)
+            total = len(df[df["id"].isnull() | df["name"].isnull()])
+            count = 0
+            for idx, row in df.iterrows():
+                if pd.isna(row["id"]) or pd.isna(row["name"]):
+                    _id, _name = get_id_name_fn(user, row["url"])
+                    df.at[idx, "id"] = _id
+                    df.at[idx, "name"] = _name
+                    count += 1
+                    pb.progress(count / total)
+            pb.empty()
+            st.session_state[editor_key] += key_delta
+            st.session_state[auto_state] = df
+            st.rerun()
+    else:
+        st.toast(f"No null values in the {item_type} table.", icon="⚠️")
 
 
 st.title("SongSmith - Configuration")
@@ -106,6 +138,7 @@ if build_config is None:
         artists=[],
     )
     st.session_state.playlists_autopopulated = None
+    st.session_state.artists_autopopulated = None
 
 st.divider()
 
@@ -147,6 +180,7 @@ if spotify_user_name != user.spotify_user_name:
 
 st.divider()
 st.markdown("## Playlists")
+st.markdown(":orange-badge[:warning: Note] Don't add playlists that are curated by spotify - they won't work.")
 if st.session_state.playlists_autopopulated is not None:
     if not st.session_state.playlists_autopopulated.isnull().values.any():
         user.playlists = [
@@ -179,40 +213,15 @@ if st.button(
     help="This will autopopulate the **name** and **id** columns - enabled when there are null values",
     disabled=not df_playlists_edited.isnull().values.any(),
 ):
-    if df_playlists_edited.isnull().values.any():
-        null_in_allowed_tracks = df_playlists_edited["allowed_tracks"].isnull().any()
-        null_in_url = df_playlists_edited["url"].isnull().any()
-        if null_in_allowed_tracks or null_in_url:
-            st.toast("can just autopopulate **name** and **id**", icon="⚠️")
-        else:
-            with st.spinner("Fetching playlist information..."):
-                progress_bar = st.progress(0)
-                total_rows = len(
-                    df_playlists_edited[
-                        df_playlists_edited["id"].isnull()
-                        | df_playlists_edited["name"].isnull()
-                    ]
-                )
-                processed = 0
-
-                for i, row in df_playlists_edited.iterrows():
-                    if pd.isna(row["id"]) or pd.isna(row["name"]):
-                        playlist_id, playlist_name = get_playlist_id_name(
-                            user, row["url"]
-                        )
-                        df_playlists_edited.at[i, "id"] = playlist_id
-                        df_playlists_edited.at[i, "name"] = playlist_name
-
-                        processed += 1
-                        progress_bar.progress(processed / total_rows)
-
-                progress_bar.empty()
-
-            st.session_state.playlist_editor_key += 1
-            st.session_state.playlists_autopopulated = df_playlists_edited
-            st.rerun()
-    else:
-        st.toast("No null values in the playlist table.", icon="⚠️")
+    _autopopulate_table(
+        df_playlists_edited,
+        "playlist",
+        get_playlist_id_name,
+        user,
+        "playlist_editor_key",
+        "playlists_autopopulated",
+        1,
+    )
 
 ###############################################################
 #################### artists ##################################
@@ -251,38 +260,15 @@ if st.button(
     disabled=not df_artists_edited.isnull().values.any(),
     use_container_width=True,
 ):
-    if df_artists_edited.isnull().values.any():
-        null_in_allowed_tracks = df_artists_edited["allowed_tracks"].isnull().any()
-        null_in_url = df_artists_edited["url"].isnull().any()
-        if null_in_allowed_tracks or null_in_url:
-            st.toast("can just autopopulate **name** and **id**", icon="⚠️")
-        else:
-            with st.spinner("Fetching playlist information..."):
-                progress_bar = st.progress(0)
-                total_rows = len(
-                    df_artists_edited[
-                        df_artists_edited["id"].isnull()
-                        | df_artists_edited["name"].isnull()
-                    ]
-                )
-                processed = 0
-
-                for i, row in df_artists_edited.iterrows():
-                    if pd.isna(row["id"]) or pd.isna(row["name"]):
-                        artist_id, artist_name = get_artist_id_name(user, row["url"])
-                        df_artists_edited.at[i, "id"] = artist_id
-                        df_artists_edited.at[i, "name"] = artist_name
-
-                        processed += 1
-                        progress_bar.progress(processed / total_rows)
-
-                progress_bar.empty()
-
-            st.session_state.artist_editor_key -= 1
-            st.session_state.artists_autopopulated = df_artists_edited
-            st.rerun()
-    else:
-        st.toast("No null values in the artist table.", icon="⚠️")
+    _autopopulate_table(
+        df_artists_edited,
+        "artist",
+        get_artist_id_name,
+        user,
+        "artist_editor_key",
+        "artists_autopopulated",
+        -1,
+    )
 
 st.download_button(
     "⬇️ Download updated configuration",
