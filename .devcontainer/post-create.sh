@@ -1,12 +1,5 @@
-pip install poetry
-poetry config virtualenvs.in-project true
-poetry install
-
-# Tool for inspecting docker images https://github.com/wagoodman/dive (make sure to run this in bash)
-# DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-# curl -OL https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb
-# sudo apt install ./dive_${DIVE_VERSION}_linux_amd64.deb
-
+# install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # configure zsh
 echo "cloning zsh plugins"

@@ -31,16 +31,9 @@
     "customizations": {
         "vscode": {
             "settings": {
-                // "files.exclude": { // if you want to see the .git folder (f.ex. for the per commit hooks understanding)
-                //     "**/.git": false
-                // },
                 "python.defaultInterpreterPath": "./.venv/bin/python",
                 "python.linting.enabled": true,
                 "python.linting.pylintEnabled": true,
-                "[python]": {
-                    "editor.defaultFormatter": "ms-python.black-formatter",
-                    "editor.formatOnSave": true
-                },
                 "terminal.integrated.defaultProfile.linux": "zsh",
                 "terminal.integrated.profiles.linux": {
                     "bash": {
@@ -65,7 +58,6 @@
             },
             "extensions": [
                 "ms-python.python",
-                "ms-python.black-formatter",
                 "github.copilot",
                 "github.copilot-chat",
                 "mhutchie.git-graph",
