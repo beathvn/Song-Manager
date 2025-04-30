@@ -1,28 +1,27 @@
-[tool.poetry]
-name = "songmanager"
-version = "0.0.1"
+[project]
+name = "song-manager"
+version = "0.1.0"
 description = ""
-authors = ["Lukas Ellemunt"]
 readme = "README.md"
-package-mode = false
+requires-python = ">=3.11"
+dependencies = [
+    "colorlog>=6.9.0",
+    "dirsync",
+    "httpx>=0.28.1",
+    "pandas>=2.2.3",
+    "pydub>=0.25.1",
+    "python-dotenv>=1.1.0",
+    "pyyaml>=6.0.2",
+    "spotdl>=4.2.11",
+    "streamlit>=1.45.0",
+    "tqdm>=4.67.1",
+    "xmltodict>=0.14.2",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.11,<3.14"
-pandas = "^2.2.3"
-colorlog = "^6.9.0"
-pyyaml = "^6.0.2"
-xmltodict = "^0.14.2"
-httpx = "<0.28"
-spotdl = "^4.2.11"
-tqdm = "^4.67.1"
-dirsync = {git = "https://github.com/beathvn/dirsync.git", rev = "develop"}
-streamlit = "^1.44.1"
-pydub = "^0.25.1"
-python-dotenv = "^1.1.0"
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]
 
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.5"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv.sources]
+dirsync = { git = "https://github.com/beathvn/dirsync.git", rev = "develop" }
