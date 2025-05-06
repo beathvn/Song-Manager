@@ -4,11 +4,13 @@
         "dockerfile": "./Dockerfile",
         "context": ".",
         "args": {
-            "VARIANT": "3.12-bullseye"
+            "VARIANT": "3.11-bullseye"
         }
     },
     "runArgs": [
         "--network=host"
+        // "-v",
+        // "/var/run/docker.sock:/var/run/docker.sock"
     ],
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": { // https://github.com/devcontainers/features/tree/main/src/common-utils
@@ -22,39 +24,35 @@
             "version": "latest",
             "ppa": "false"
         },
-        "ghcr.io/devcontainers-extra/features/ffmpeg-apt-get:1": {}, // needed for spotdl
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers-extra/features/ffmpeg-apt-get:1": {} // needed for spotdl
     },
-    "mounts": [
-        "source=${localEnv:HOME}/Downloads,target=/home/vscode/Downloads,type=bind"
-    ],
     "customizations": {
         "vscode": {
             "settings": {
                 "python.defaultInterpreterPath": "./.venv/bin/python",
                 "python.linting.enabled": true,
                 "python.linting.pylintEnabled": true,
-                "terminal.integrated.defaultProfile.linux": "zsh",
-                "terminal.integrated.profiles.linux": {
-                    "bash": {
-                        "path": "bash",
-                        "icon": "terminal-bash"
-                    },
-                    "zsh": {
-                        "path": "zsh"
-                    },
-                    "fish": {
-                        "path": "fish"
-                    },
-                    "tmux": {
-                        "path": "tmux",
-                        "icon": "terminal-tmux"
-                    },
-                    "pwsh": {
-                        "path": "pwsh",
-                        "icon": "terminal-powershell"
-                    }
-                }
+                "terminal.integrated.defaultProfile.linux": "zsh"
+                // "terminal.integrated.profiles.linux": {
+                //     "bash": {
+                //         "path": "bash",
+                //         "icon": "terminal-bash"
+                //     },
+                //     "zsh": {
+                //         "path": "zsh"
+                //     },
+                //     "fish": {
+                //         "path": "fish"
+                //     },
+                //     "tmux": {
+                //         "path": "tmux",
+                //         "icon": "terminal-tmux"
+                //     },
+                //     "pwsh": {
+                //         "path": "pwsh",
+                //         "icon": "terminal-powershell"
+                //     }
+                // }
             },
             "extensions": [
                 "ms-python.python",
@@ -66,6 +64,7 @@
                 "ms-toolsai.jupyter",
                 "gruntfuggly.todo-tree",
                 "yzhang.markdown-all-in-one",
+                "ms-azuretools.vscode-containers",
                 "davidanson.vscode-markdownlint"
             ]
         }
