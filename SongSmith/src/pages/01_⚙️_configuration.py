@@ -1,7 +1,6 @@
 # system imports
 from datetime import datetime
 import math
-import os
 
 # 3rd party imports
 import streamlit as st
@@ -11,7 +10,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from typing import Callable
 
 # user imports
-from entities import *
+from entities import User, Track, Authentication, CatalogItem
 
 ###############################################################
 ################# general functions ###########################
@@ -183,7 +182,9 @@ if spotify_user_name != user.spotify_user_name:
 
 st.divider()
 st.markdown("## Playlists")
-st.markdown(":orange-badge[:warning: Note] Don't add playlists that are curated by spotify - they won't work.")
+st.markdown(
+    ":orange-badge[:warning: Note] Don't add playlists that are curated by spotify - they won't work."
+)
 if st.session_state.playlists_autopopulated is not None:
     if not st.session_state.playlists_autopopulated.isnull().values.any():
         user.playlists = [
@@ -290,7 +291,12 @@ st.divider()
 #################### artists ##################################
 ###############################################################
 
-disable_init_tracks = client_id == "" or client_secret == "" or redirect_uri == "" or spotify_user_name == ""
+disable_init_tracks = (
+    client_id == ""
+    or client_secret == ""
+    or redirect_uri == ""
+    or spotify_user_name == ""
+)
 
 if st.button(
     "Init tracks table",
@@ -310,20 +316,26 @@ if st.button(
     pb = st.progress(0, "Fetching your saved tracks...")
     for curr_iteration in range(iterations):
         track_results = sp.current_user_saved_tracks(
-            limit=request_limit, offset=curr_iteration * request_limit)
-        results += track_results['items']
-        pb.progress((curr_iteration + 1) / iterations, f"Fetching your saved tracks...")
-    
+            limit=request_limit, offset=curr_iteration * request_limit
+        )
+        results += track_results["items"]
+        pb.progress((curr_iteration + 1) / iterations, "Fetching your saved tracks...")
+
     pb.empty()
-    
-    tracks_list = [Track(
-        id=track["track"]["id"],
-        name=track["track"]["name"],
-        artist_ids=[artist["id"] for artist in track["track"]["artists"]],
-        artist_names=[artist["name"] for artist in track["track"]["artists"]],
-        date_added=datetime.strptime(track["added_at"], "%Y-%m-%dT%H:%M:%SZ").date(),
-        added_from="favorites"
-    ) for track in results]
+
+    tracks_list = [
+        Track(
+            id=track["track"]["id"],
+            name=track["track"]["name"],
+            artist_ids=[artist["id"] for artist in track["track"]["artists"]],
+            artist_names=[artist["name"] for artist in track["track"]["artists"]],
+            date_added=datetime.strptime(
+                track["added_at"], "%Y-%m-%dT%H:%M:%SZ"
+            ).date(),
+            added_from="favorites",
+        )
+        for track in results
+    ]
 
     df = pd.DataFrame([vars(track) for track in tracks_list])
     st.session_state.tracks = df

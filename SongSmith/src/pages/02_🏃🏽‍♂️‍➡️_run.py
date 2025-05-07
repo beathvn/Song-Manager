@@ -1,5 +1,4 @@
 # system imports
-import os
 from datetime import date
 
 # 3rd party imports
@@ -10,7 +9,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # user imports
-from entities import *
+from entities import User, Track
+
 
 def _get_spotify_obj(user: User, scop: str) -> spotipy.Spotify:
     """Get the Spotify object with the given scope"""
@@ -33,7 +33,7 @@ with col1:
         help="Upload the json file with your configuration.",
         accept_multiple_files=False,
     )
-        
+
     # we just want to reload when we haven't already loaded the user
     # otherwise we would overwrite the changes we made in the build tab
     if user is not None:
@@ -106,8 +106,9 @@ if st.button(
         continue_to_go_back = True
         while True:
             track_results = sp.current_user_saved_tracks(
-                limit=50, offset=iteration * 50)
-            results += track_results['items']
+                limit=50, offset=iteration * 50
+            )
+            results += track_results["items"]
             ids = [track["track"]["id"] for track in results]
 
             # we don't look just in the favorites - as soon we find a track that is already in the database, we stop
@@ -115,18 +116,26 @@ if st.button(
                 break
             iteration += 1
 
-
-        possible_new_tracks = tracks_list = [Track(
-            id=track["track"]["id"],
-            name=track["track"]["name"],
-            artist_ids=[artist["id"] for artist in track["track"]["artists"]],
-            artist_names=[artist["name"] for artist in track["track"]["artists"]],
-            date_added=datetime.strptime(track["added_at"], "%Y-%m-%dT%H:%M:%SZ").date(),
-            added_from="favorites"
-        ) for track in results]
+        possible_new_tracks = tracks_list = [
+            Track(
+                id=track["track"]["id"],
+                name=track["track"]["name"],
+                artist_ids=[artist["id"] for artist in track["track"]["artists"]],
+                artist_names=[artist["name"] for artist in track["track"]["artists"]],
+                date_added=datetime.strptime(
+                    track["added_at"], "%Y-%m-%dT%H:%M:%SZ"
+                ).date(),
+                added_from="favorites",
+            )
+            for track in results
+        ]
 
         # concatenate the new tracks, where the id is not in the database
-        new_tracks = [track for track in possible_new_tracks if track.id not in df_tracks["id"].values]
+        new_tracks = [
+            track
+            for track in possible_new_tracks
+            if track.id not in df_tracks["id"].values
+        ]
         if len(new_tracks) > 0:
             st.toast(f"Found {len(new_tracks)} new tracks", icon="✅")
             df_new_tracks = pd.DataFrame([vars(track) for track in new_tracks])
@@ -134,7 +143,7 @@ if st.button(
             df_tracks.reset_index(drop=True, inplace=True)
         else:
             st.toast("No new favorite tracks found", icon="✅")
-    
+
     ###############################################################
     ####### add the latest tracks from playlists / artists ########
     ###############################################################
@@ -142,7 +151,7 @@ if st.button(
     # this will hold the dataframes of the tracks to add
     tracks_to_add = []
     today = date.today()
-    
+
     pb_progress = 0
     pb = st.progress(pb_progress, "Going through playlists...")
     pb_step = 1 / (len(user.playlists) + len(user.artists))
@@ -164,15 +173,17 @@ if st.button(
                 fields="items(track(id, popularity)",
             )["items"]
             tracks_in_playlist.extend([t["track"] for t in tracks])
-        
+
         df_tracks_playlist = pd.DataFrame(tracks_in_playlist)
-        df_tracks_playlist = df_tracks_playlist[~df_tracks_playlist["id"].isin(df_tracks["id"])]
+        df_tracks_playlist = df_tracks_playlist[
+            ~df_tracks_playlist["id"].isin(df_tracks["id"])
+        ]
         df_tracks_playlist.sort_values(by="popularity", ascending=False, inplace=True)
         df_tracks_playlist.drop(columns=["popularity"], inplace=True)
         df_tracks_playlist["added_from"] = f"pla:{playlist.id}"
         df_tracks_playlist["date_added"] = today
-        tracks_to_add.append(df_tracks_playlist.iloc[:playlist.allowed_tracks])
-        
+        tracks_to_add.append(df_tracks_playlist.iloc[: playlist.allowed_tracks])
+
         pb_progress += pb_step
         pb.progress(pb_progress, "Going through playlists...")
 
@@ -194,50 +205,59 @@ if st.button(
             }
             for track in tracks_in_artist
         ]
-        
+
         df_tracks_artist = pd.DataFrame(tracks_in_artist)
-        df_tracks_artist = df_tracks_artist[~df_tracks_artist["id"].isin(df_tracks["id"])]
+        df_tracks_artist = df_tracks_artist[
+            ~df_tracks_artist["id"].isin(df_tracks["id"])
+        ]
         df_tracks_artist.sort_values(by="popularity", ascending=False, inplace=True)
         df_tracks_artist.drop(columns=["popularity"], inplace=True)
         df_tracks_artist["added_from"] = f"art:{artist.id}"
         df_tracks_artist["date_added"] = today
-        tracks_to_add.append(df_tracks_artist.iloc[:artist.allowed_tracks])
-        
+        tracks_to_add.append(df_tracks_artist.iloc[: artist.allowed_tracks])
+
         pb_progress += pb_step
         pb.progress(pb_progress, "Going through artists...")
-    
+
     pb.empty()
     st.toast("Finished going through playlists & artists", icon="✅")
-    
+
     with st.spinner("Retrieving metadata for new tracks...", show_time=True):
         all_track_dfs = [df_tracks] + tracks_to_add
         df_tracks_new = pd.concat(all_track_dfs, ignore_index=True, sort=False)
         df_tracks_new.drop_duplicates(subset=["id"], inplace=True)
-        
+
         def populate_null(row):
             if row.isnull().any():
                 curr_track = sp.track(row["id"])
                 row["name"] = curr_track["name"]
                 row["artist_ids"] = [artist["id"] for artist in curr_track["artists"]]
-                row["artist_names"] = [artist["name"] for artist in curr_track["artists"]]
+                row["artist_names"] = [
+                    artist["name"] for artist in curr_track["artists"]
+                ]
                 return row
             else:
                 return row
-            
+
         df_filled = df_tracks_new.apply(populate_null, axis=1)
         st.session_state.tracks_new = df_filled
         df_latest = df_filled
 
 if df_latest is not None:
     user: User = st.session_state.user
-    st.dataframe(df_latest[["name", "artist_names", "added_from", "date_added"]], use_container_width=True)
+    st.dataframe(
+        df_latest[["name", "artist_names", "added_from", "date_added"]],
+        use_container_width=True,
+    )
     selected_date = st.date_input(
         "Date added",
         value=date.today(),
         label_visibility="collapsed",
         # disabled=True,
     )
-    st.markdown(":blue-badge[:warning: IMPORTANT] don't forget to download the updated tracks table")
+    st.markdown(
+        ":blue-badge[:warning: IMPORTANT] don't forget to download the updated tracks table"
+    )
     col1, col2 = st.columns(2)
     with col1:
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -249,10 +269,16 @@ if df_latest is not None:
             use_container_width=True,
         )
     with col2:
-        if st.button("create playlist for selected date", use_container_width=True, type="primary"):
+        if st.button(
+            "create playlist for selected date",
+            use_container_width=True,
+            type="primary",
+        ):
             with st.spinner("Creating playlist...", show_time=True):
                 df_for_playlist = df_latest[df_latest["date_added"] == selected_date]
-                df_for_playlist = df_for_playlist[df_for_playlist["added_from"] != "favorites"]
+                df_for_playlist = df_for_playlist[
+                    df_for_playlist["added_from"] != "favorites"
+                ]
                 cnt_tracks = df_for_playlist.shape[0]
                 if cnt_tracks > 0:
                     sp = _get_spotify_obj(user, "playlist-modify-private")
@@ -263,8 +289,11 @@ if df_latest is not None:
                         collaborative=False,
                         description="New arrivals playlist",
                     )
-                    sp.playlist_add_items(playlist["id"], df_for_playlist["id"].tolist())
-                    st.toast(f"Playlist created with **{cnt_tracks}** tracks!", icon="✅")
+                    sp.playlist_add_items(
+                        playlist["id"], df_for_playlist["id"].tolist()
+                    )
+                    st.toast(
+                        f"Playlist created with **{cnt_tracks}** tracks!", icon="✅"
+                    )
                 else:
                     st.toast("No tracks for the selected date", icon="⚠️")
-    
