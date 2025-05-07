@@ -292,8 +292,6 @@ if df_latest is not None:
                     sp.playlist_add_items(
                         playlist["id"], df_for_playlist["id"].tolist()
                     )
-                    st.toast(
-                        f"Playlist created with **{cnt_tracks}** tracks!", icon="✅"
-                    )
+                    st.success(f"✅ Playlist created with **{cnt_tracks}** tracks!")
                 else:
                     st.toast("No tracks for the selected date", icon="⚠️")
