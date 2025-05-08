@@ -225,7 +225,7 @@ if st.button(
     with st.spinner("Retrieving metadata for new tracks...", show_time=True):
         all_track_dfs = [df_tracks] + tracks_to_add
         df_tracks_new = pd.concat(all_track_dfs, ignore_index=True, sort=False)
-        df_tracks_new.drop_duplicates(subset=["id"], inplace=True)
+        df_tracks_new.drop_duplicates(subset=["id"], inplace=True, keep="first")
 
         def populate_null(row):
             if row.isnull().any():
@@ -289,9 +289,14 @@ if df_latest is not None:
                         collaborative=False,
                         description="New arrivals playlist",
                     )
-                    sp.playlist_add_items(
-                        playlist["id"], df_for_playlist["id"].tolist()
-                    )
+                    ids_to_add = df_for_playlist["id"].tolist()
+                    batch_size = 100
+                    for i in range(0, len(ids_to_add), batch_size):
+                        sp.playlist_add_items(
+                            playlist["id"],
+                            ids_to_add[i : i + batch_size],
+                            position=i,
+                        )
                     st.success(f"✅ Playlist created with **{cnt_tracks}** tracks!")
                 else:
                     st.toast("No tracks for the selected date", icon="⚠️")

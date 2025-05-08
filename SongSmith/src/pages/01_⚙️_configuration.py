@@ -29,7 +29,7 @@ def _get_spotify_obj(user: User, scop: str) -> spotipy.Spotify:
 
 def get_playlist_id_name(user: User, playlist_url: str) -> tuple[str, str]:
     """Get the playlist ID and name from the URL
-    Return None when error happens
+    stops when there is an error
     """
     try:
         sp = _get_spotify_obj(user, "user-library-read")
@@ -37,7 +37,7 @@ def get_playlist_id_name(user: User, playlist_url: str) -> tuple[str, str]:
         return playlist["id"], playlist["name"]
     except Exception as e:
         st.error(f"Error fetching playlist: {e}")
-        return None, None
+        st.stop()
 
 
 def get_artist_id_name(user: User, artist_url: str) -> tuple[str, str]:
