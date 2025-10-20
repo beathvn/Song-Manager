@@ -10,11 +10,11 @@ This section is all about the spotify functionality of this repo.
 ## Feature overview
 
 - **Creating** a spotify playlist of newly added songs of specified playlists and artists using [spotipy](https://github.com/spotipy-dev/spotipy)
-- For **downloading** songs of a whole playlist, use [spotdl](https://github.com/spotDL/spotify-downloader). See below for the cli usage:
+- For **downloading** songs of a whole playlist, use [spotdl](https://github.com/spotDL/spotify-downloader). See below for the cli usage (find [docs](https://spotdl.github.io/spotify-downloader/usage/)):
 
     ```bash
-    spotdl SPOTIFY_PLAYLIST_URL --output ~/Downloads
-    spotdl YOUTUBE_URL|SPOTIFY_URL --output ~/Downloads
+    spotdl "SPOTIFY_PLAYLIST_URL" --output ~/Downloads
+    spotdl download "YOUTUBE_URL|SPOTIFY_URL" --output ~/Downloads
     ```
 
     > [!NOTE]

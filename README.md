@@ -22,6 +22,8 @@ The documentation is split up into several sections. See the table of contents b
 
 ### Dev Container
 
+When working in dev container, and doing uv sync, it will delete the local one and regenerate and viceversa (when you want to use the FilePilot script), it won't work, since that needs a local venv to work. - maybe we can containerize the devcontainer to production and sping that up in our script?
+!!Also: double check the downloaded songs - maybe there are songs that have not beed found - in streamlit you see the "ERROR" warning, telling you the song that did not work - but this is not reflected in the prints on streamlit.
 For some features (no local folder mounts required) you can use devcontainer. To learn more about that, check [this](https://code.visualstudio.com/docs/devcontainers/containers) out.
 
 ### Local machine (tested only on MacOS)

@@ -17,7 +17,7 @@ from shared.dataloading import load_yaml, write_yaml
 st.title("FilePilot - Download")
 
 # Load configuration
-config_folder = "FilePilot/config/"
+config_folder = "./apps/FilePilot/config/"
 config_path = os.path.join(config_folder, "download.yaml")
 if "download_config" not in st.session_state:
     try:

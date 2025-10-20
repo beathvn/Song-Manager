@@ -5,7 +5,7 @@
             "name": "update dataset",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/streaming/dataset.py",
+            "program": "${workspaceFolder}/apps/SongSmith/src/streaming/dataset.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -14,21 +14,13 @@
             ]
         },
         {
-            "name": "create new songs playlist",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/streaming/create_new_songs_playlist.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-        },
-        {
             "name": "FilePilot Frontend",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",
             "args": [
                 "run",
-                "FilePilot/src/welcome.py",
+                "apps/FilePilot/src/welcome.py",
                 "--server.port",
                 "8080"
             ],
@@ -40,7 +32,7 @@
             "module": "streamlit",
             "args": [
                 "run",
-                "SongSmith/src/app.py",
+                "apps/SongSmith/src/app.py",
                 "--server.port",
                 "8081"
             ]
