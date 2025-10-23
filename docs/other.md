@@ -1,11 +1,6 @@
 # Other
 
 This section covers other functionalities, that are not directly related to spotify or rekordbox.
-
-- [Other](#other)
-  - [Normalize Audio](#normalize-audio)
-  - [Sync folders](#sync-folders)
-
 ## Normalize Audio
 
 Normalizing audio using [pydub](https://github.com/jiaaro/pydub).
