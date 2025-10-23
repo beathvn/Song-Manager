@@ -13,7 +13,7 @@ dependencies = [
     "pydub>=0.25.1",
     "python-dotenv>=1.1.0",
     "pyyaml>=6.0.2",
-    "spotdl==4.4.0",
+    "spotdl>=4.4.3",
     "streamlit>=1.45.0",
     "tqdm>=4.67.1",
     "xmltodict>=0.14.2",
