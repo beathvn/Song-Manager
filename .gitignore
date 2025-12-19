@@ -5,6 +5,7 @@ scripts/*
 *__pycache__
 tutorials
 .venv/
+env/
 
 # files
 *.DS_Store
