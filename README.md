@@ -27,6 +27,7 @@ uv sync
 ```
 
 This will create a virtual environment and install all dependencies.
+Additionally, you need `ffmpeg` installed on your system - f.ex. with `brew install ffmpeg`.
 
 > [!NOTE]
 > Make a script executable with this command `chmod +x script.sh`

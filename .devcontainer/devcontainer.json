@@ -1,28 +1,16 @@
 { // https://github.com/devcontainers/images/tree/main/src/python/.devcontainer
     "name": "Python 3",
-    "build": {
-        "dockerfile": "./Dockerfile",
-        "context": ".",
-        "args": {
-            "VARIANT": "3.11-slim"
-        }
-    },
+    "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
     "runArgs": [
         "--network=host"
     ],
     "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": { // https://github.com/devcontainers/features/tree/main/src/common-utils
-            "installZsh": "true",
-            "username": "vscode",
-            "userUid": "1000",
-            "userGid": "1000",
-            "upgradePackages": "true"
-        },
         "ghcr.io/devcontainers/features/git:1": { // https://github.com/devcontainers/features/tree/main/src/git
             "version": "latest",
             "ppa": "false"
         },
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/devcontainers-extra/features/ffmpeg-apt-get:1": {}
     },
     "customizations": {
         "vscode": {
