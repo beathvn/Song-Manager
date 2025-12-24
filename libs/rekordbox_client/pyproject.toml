@@ -1,0 +1,14 @@
+[project]
+name = "rekordbox-client"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Lukas Ellemunt", email = "lukas.ellemunt@icloud.com" }
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"

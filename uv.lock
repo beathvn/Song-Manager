@@ -6,6 +6,13 @@ resolution-markers = [
     "python_full_version < '3.12'",
 ]
 
+[manifest]
+members = [
+    "rekordbox-client",
+    "song-manager",
+    "spotify-client",
+]
+
 [[package]]
 name = "altair"
 version = "5.5.0"
@@ -1411,6 +1418,11 @@ wheels = [
 ]
 
 [[package]]
+name = "rekordbox-client"
+version = "0.1.0"
+source = { editable = "libs/rekordbox_client" }
+
+[[package]]
 name = "requests"
 version = "2.32.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1613,6 +1625,7 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "pyyaml" },
     { name = "spotdl" },
+    { name = "spotify-client" },
     { name = "spotipy" },
     { name = "streamlit" },
     { name = "tqdm" },
@@ -1636,6 +1649,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "spotdl", specifier = ">=4.4.3" },
+    { name = "spotify-client", editable = "libs/spotify_client" },
     { name = "spotipy", specifier = ">=2.25.1" },
     { name = "streamlit", specifier = ">=1.45.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
@@ -1699,6 +1713,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/9b/22/9b6ebf3caabc4e16c
 wheels = [
     { url = "https://files.pythonhosted.org/packages/03/02/c868f88b57d2152e3675204ef83db445f4d1ee3b987514784c60f55ab1c2/spotdl-4.4.3-py3-none-any.whl", hash = "sha256:9afb8cbc4c8312d5370f97eb610bb569533eb93597d78ea60180219a4b16d0a2", size = 117458, upload-time = "2025-10-08T11:00:48.958Z" },
 ]
+
+[[package]]
+name = "spotify-client"
+version = "0.1.0"
+source = { editable = "libs/spotify_client" }
 
 [[package]]
 name = "spotipy"

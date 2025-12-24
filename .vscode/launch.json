@@ -2,55 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "update dataset",
+            "name": "New Arrivals Playlist",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/apps/SongSmith/src/streaming/dataset.py",
+            "program": "${workspaceFolder}/services/spotify_discovery/src/main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--mode",
-                "update"
-            ]
-        },
-        {
-            "name": "FilePilot Frontend",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "streamlit",
-            "args": [
-                "run",
-                "apps/FilePilot/src/welcome.py",
-                "--server.port",
-                "8080"
-            ],
-        },
-        {
-            "name": "SongSmith Frontend",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "streamlit",
-            "args": [
-                "run",
-                "apps/SongSmith/src/app.py",
-                "--server.port",
-                "8081"
-            ]
-        },
-        {
-            "name": "Export Playlist Track CSV",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/apps/SongSmith/src/export_playlist_track_csv.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--playlist_url",
-                "https://open.spotify.com/playlist/2rtsszNSA7e5LlO87Ryfyx?si=6f8447d08331416d",
-                "--output-folder",
-                "./data/found_on_the_road",
-                "--env-file",
-                "apps/SongSmith/.env"
+                "--config",
+                "data/config_test.json",
+                "--database",
+                "data"
             ]
         }
     ]

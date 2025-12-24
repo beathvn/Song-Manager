@@ -1,9 +1,4 @@
-# DEPRECATED: USE THE SONESMITH WEBSITE INSTEAD
-# Execute this script to create a playlist with all songs that are 
-# newly added (in playlists or favourite artists) since the last time you executed the script.
+cd "$(dirname "$0")/.."
+source .venv/bin/activate
 
-# cd "$(dirname "$0")/.."
-# source .venv/bin/activate
-
-# python src/streaming/dataset.py --mode "update"
-# python src/streaming/create_new_songs_playlist.py
+python services/spotify_discovery/src/main.py --config data/config_test.json --database data
