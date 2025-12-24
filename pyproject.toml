@@ -13,6 +13,7 @@ dependencies = [
     "pydub>=0.25.1",
     "python-dotenv>=1.1.0",
     "pyyaml>=6.0.2",
+    "song-common",
     "spotdl>=4.4.3",
     "spotify-client",
     "spotipy>=2.25.1",
@@ -27,12 +28,10 @@ dev = ["ipykernel>=6.29.5", "ruff>=0.11.8"]
 [tool.uv.sources]
 dirsync = { git = "https://github.com/beathvn/dirsync.git", rev = "develop" }
 spotify-client = { workspace = true }
+song-common = { workspace = true }
 
 [tool.uv.workspace]
-members = [
-    "libs/spotify_client",
-    "libs/rekordbox_client",
-]
+members = ["libs/spotify_client", "libs/rekordbox_client", "libs/song_common"]
 
 [tool.ruff]
 exclude = [".git", "__pycache__", ".venv"]

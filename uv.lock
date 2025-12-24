@@ -9,6 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "rekordbox-client",
+    "song-common",
     "song-manager",
     "spotify-client",
 ]
@@ -1612,6 +1613,11 @@ wheels = [
 ]
 
 [[package]]
+name = "song-common"
+version = "0.1.0"
+source = { editable = "libs/song_common" }
+
+[[package]]
 name = "song-manager"
 version = "0.1.0"
 source = { virtual = "." }
@@ -1624,6 +1630,7 @@ dependencies = [
     { name = "pydub" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
+    { name = "song-common" },
     { name = "spotdl" },
     { name = "spotify-client" },
     { name = "spotipy" },
@@ -1648,6 +1655,7 @@ requires-dist = [
     { name = "pydub", specifier = ">=0.25.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "song-common", editable = "libs/song_common" },
     { name = "spotdl", specifier = ">=4.4.3" },
     { name = "spotify-client", editable = "libs/spotify_client" },
     { name = "spotipy", specifier = ">=2.25.1" },

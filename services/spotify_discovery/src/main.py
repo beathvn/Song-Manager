@@ -2,6 +2,7 @@
 import os
 import argparse
 from datetime import date, datetime
+import logging
 
 # 3rd party imports
 import pandas as pd
@@ -10,9 +11,11 @@ from spotipy.oauth2 import SpotifyOAuth
 
 # private library imports
 from spotify_client.entities import User, Track
+from song_common.logging_config import setup_logging
 
 
 def main(config_path: str, database_folder: str) -> None:
+    logger = logging.getLogger(__name__)
     with open(config_path, "r") as f:
         user = User.model_validate_json(f.read())
 
@@ -28,7 +31,7 @@ def main(config_path: str, database_folder: str) -> None:
     # find the most recently added favorite track
     idx = df_tracks.loc[df_tracks["added_from"] == "favorites", "date_added"].idxmax()
     latest_fav_id = df_tracks.loc[idx, "id"]
-    print("latest favorite track id:", latest_fav_id)
+    logger.debug(f"latest favorite track id: {latest_fav_id}")
 
     scope = "user-library-read"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
@@ -41,7 +44,7 @@ def main(config_path: str, database_folder: str) -> None:
         page = sp.current_user_saved_tracks(limit=50, offset=offset)
         items = page["items"]
         if not items:
-            print("no more items")
+            logger.debug("no more items for favorites")
             break
 
         for item in items:
@@ -107,12 +110,11 @@ def main(config_path: str, database_folder: str) -> None:
         df_tracks_playlist["added_from"] = f"pla:{playlist.id}"
         df_tracks_playlist["date_added"] = today
         if df_tracks_playlist.empty:
-            print("playlist done (no new tracks):", playlist.name)
+            logger.info(f"playlist done (no new tracks): {playlist.name}")
             continue
 
         new_pla_tracks.append(df_tracks_playlist.iloc[: playlist.allowed_tracks])
-        print("playlist done:", playlist.name)
-
+        logger.info(f"playlist done: {playlist.name}")
     new_art_tracks = []
     for artist in user.artists:
         # just keep the relevant fields
@@ -134,12 +136,12 @@ def main(config_path: str, database_folder: str) -> None:
         df_tracks_artist["added_from"] = f"art:{artist.id}"
         df_tracks_artist["date_added"] = today
         if df_tracks_artist.empty:
-            print("artist done (no new tracks):", artist.name)
+            logger.info("artist done (no new tracks):", artist.name)
             continue
 
         new_art_tracks.append(df_tracks_artist.iloc[: artist.allowed_tracks])
 
-        print("☑️ artist done:", artist.name)
+        logger.info("☑️ artist done:", artist.name)
 
     ################## step 4 ##################
     df_tracks_updated: pd.DataFrame = pd.concat(
@@ -152,7 +154,7 @@ def main(config_path: str, database_folder: str) -> None:
     df_tracks_updated.drop_duplicates(subset=["id"], inplace=True)
     len_after = len(df_tracks_updated)
     if len_before != len_after:
-        print(
+        logger.info(
             f"⚠️ Dropped {len_before - len_after} duplicate tracks when merging new tracks."
         )
 
@@ -200,12 +202,14 @@ def main(config_path: str, database_folder: str) -> None:
                 ids_to_add[i : i + batch_size],
                 position=i,
             )
-        print(f"☑️ Playlist created with {cnt_tracks} tracks!")
+        logger.info(f"☑️ Playlist created with {cnt_tracks} tracks!")
     else:
-        print("ℹ️ No new tracks added today from playlists or artists.")
+        logger.info("ℹ️ No new tracks added today from playlists or artists.")
 
 
 if __name__ == "__main__":
+    setup_logging()
+
     ################## step 0 ##################
     parser = argparse.ArgumentParser(description="Spotify Discovery Service")
     parser.add_argument(
