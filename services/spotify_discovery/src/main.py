@@ -8,6 +8,7 @@ import logging
 import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from tqdm import tqdm
 
 # private library imports
 from spotify_client.entities import User, Track
@@ -16,7 +17,7 @@ from song_common.logging_config import setup_logging
 
 def main(config_path: str, database_folder: str) -> None:
     logger = logging.getLogger("spotify_discovery")
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     with open(config_path, "r") as f:
         user = User.model_validate_json(f.read())
 
@@ -88,7 +89,7 @@ def main(config_path: str, database_folder: str) -> None:
     today = date.today()
     new_pla_tracks = []
 
-    for playlist in user.playlists:
+    for playlist in tqdm(user.playlists, desc="Playlists"):
         tracks_in_playlist = []
         tot_tracks = sp.playlist(playlist.id, fields="tracks.total")["tracks"]["total"]
         batch_size = 100
@@ -111,13 +112,13 @@ def main(config_path: str, database_folder: str) -> None:
         df_tracks_playlist["added_from"] = f"pla:{playlist.id}"
         df_tracks_playlist["date_added"] = today
         if df_tracks_playlist.empty:
-            logger.info(f"playlist done (no new tracks): {playlist.name}")
+            logger.debug(f"playlist done (no new tracks): {playlist.name}")
             continue
 
         new_pla_tracks.append(df_tracks_playlist.iloc[: playlist.allowed_tracks])
-        logger.info(f"playlist done: {playlist.name}")
+        logger.debug(f"playlist done: {playlist.name}")
     new_art_tracks = []
-    for artist in user.artists:
+    for artist in tqdm(user.artists, desc="Artists"):
         # just keep the relevant fields
         tracks_in_artist = [
             {
@@ -137,12 +138,12 @@ def main(config_path: str, database_folder: str) -> None:
         df_tracks_artist["added_from"] = f"art:{artist.id}"
         df_tracks_artist["date_added"] = today
         if df_tracks_artist.empty:
-            logger.info(f"artist done (no new tracks): {artist.name}")
+            logger.debug(f"artist done (no new tracks): {artist.name}")
             continue
 
         new_art_tracks.append(df_tracks_artist.iloc[: artist.allowed_tracks])
 
-        logger.info(f"artist done: {artist.name}")
+        logger.debug(f"artist done: {artist.name}")
 
     ################## step 4 ##################
     df_tracks_updated: pd.DataFrame = pd.concat(
