@@ -15,7 +15,8 @@ from song_common.logging_config import setup_logging
 
 
 def main(config_path: str, database_folder: str) -> None:
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("spotify_discovery")
+    logger.setLevel(logging.DEBUG)
     with open(config_path, "r") as f:
         user = User.model_validate_json(f.read())
 
@@ -31,7 +32,7 @@ def main(config_path: str, database_folder: str) -> None:
     # find the most recently added favorite track
     idx = df_tracks.loc[df_tracks["added_from"] == "favorites", "date_added"].idxmax()
     latest_fav_id = df_tracks.loc[idx, "id"]
-    logger.debug(f"latest favorite track id: {latest_fav_id}")
+    logger.info(f"latest favorite track id: {latest_fav_id}")
 
     scope = "user-library-read"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
@@ -136,12 +137,12 @@ def main(config_path: str, database_folder: str) -> None:
         df_tracks_artist["added_from"] = f"art:{artist.id}"
         df_tracks_artist["date_added"] = today
         if df_tracks_artist.empty:
-            logger.info("artist done (no new tracks):", artist.name)
+            logger.info(f"artist done (no new tracks): {artist.name}")
             continue
 
         new_art_tracks.append(df_tracks_artist.iloc[: artist.allowed_tracks])
 
-        logger.info("☑️ artist done:", artist.name)
+        logger.info(f"artist done: {artist.name}")
 
     ################## step 4 ##################
     df_tracks_updated: pd.DataFrame = pd.concat(
@@ -155,7 +156,7 @@ def main(config_path: str, database_folder: str) -> None:
     len_after = len(df_tracks_updated)
     if len_before != len_after:
         logger.info(
-            f"⚠️ Dropped {len_before - len_after} duplicate tracks when merging new tracks."
+            f"Dropped {len_before - len_after} duplicate tracks when merging new tracks."
         )
 
     ################## step 5 ##################
@@ -202,9 +203,9 @@ def main(config_path: str, database_folder: str) -> None:
                 ids_to_add[i : i + batch_size],
                 position=i,
             )
-        logger.info(f"☑️ Playlist created with {cnt_tracks} tracks!")
+        logger.info(f"Playlist created with {cnt_tracks} tracks!")
     else:
-        logger.info("ℹ️ No new tracks added today from playlists or artists.")
+        logger.info("No new tracks added today from playlists or artists.")
 
 
 if __name__ == "__main__":

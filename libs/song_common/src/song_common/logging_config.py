@@ -14,13 +14,17 @@ def setup_logging():
     if root.handlers:  # guard against duplicate handlers
         return
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="{asctime} {name} - {levelname} - {message}",
+    formatter = logging.Formatter(
+        fmt="{asctime} {name} - {levelname} - {message}",
         style="{",
         datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[
-            logging.FileHandler(log_filepath, encoding="utf-8"),
-            logging.StreamHandler(sys.stdout),
-        ],
     )
+
+    file_handler = logging.FileHandler(log_filepath, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+
+    root.addHandler(file_handler)
+    root.addHandler(console_handler)
