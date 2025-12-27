@@ -13,10 +13,10 @@ Song-Manager is a collection of scripts to manage your music collection. This in
 
 The documentation is split up into several sections. See the table of contents below for an overview:
 
-- [Spotify](./docs/spotify.md)
-- [Rekordbox](./docs/rekordbox.md)
-- [Other](./docs/other.md)
-- [Developement](./docs/developement.md)
+- [[spotify]]
+- [[rekordbox]]
+- [[other]]
+- [[development]]
 
 ## Getting started
 
