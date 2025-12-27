@@ -14,6 +14,22 @@
                 "--database",
                 "data"
             ]
+        },
+        {
+            "name": "Save Found on the Road playlist",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/services/spotify_downloader/src/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--config",
+                "data/config_test.json",
+                "--playlist_url",
+                "https://open.spotify.com/playlist/2rtsszNSA7e5LlO87Ryfyx?si=6f8447d08331416d",
+                "--output_folder",
+                "./data/found_on_the_road"
+            ]
         }
     ]
 }
