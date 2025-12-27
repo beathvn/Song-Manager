@@ -1,6 +1,7 @@
 # Spotify
 
 This section is all about the spotify functionality of this repo.
+
 ## Feature overview
 
 - **Creating** a spotify playlist of newly added songs of specified playlists and artists using [spotipy](https://github.com/spotipy-dev/spotipy)
@@ -10,6 +11,7 @@ This section is all about the spotify functionality of this repo.
     spotdl "SPOTIFY_PLAYLIST_URL" --output ~/Downloads
     spotdl download "YOUTUBE_URL|SPOTIFY_URL" --output ~/Downloads
 ```
+
 ## Initial setup
 
 > [!CAUTION]
