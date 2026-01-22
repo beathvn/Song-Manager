@@ -25,9 +25,9 @@
             "args": [
                 "--config",
                 "data/config_test.json",
-                "--playlist_url",
+                "--playlist-url",
                 "https://open.spotify.com/playlist/2rtsszNSA7e5LlO87Ryfyx?si=6f8447d08331416d",
-                "--output_folder",
+                "--output-folder",
                 "./data/found_on_the_road"
             ]
         }
