@@ -18,5 +18,7 @@ connection.yaml
 *.ipynb
 *.env
 *.csv
-*.json
 *.parquet
+
+# specific files
+.obsidian/workspace.json
