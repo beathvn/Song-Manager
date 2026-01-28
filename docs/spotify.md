@@ -58,15 +58,6 @@ Before you start, there is a few things you need to setup:
 
 ## Feature overview
 
-### Spotify Discovery
+![[services/spotify_discovery/README|spotify discovery README]]
 
-create a spotify playlist of newly added songs to specified playlists and artists. Under the hood, the [spotipy](https://github.com/spotipy-dev/spotipy) library is used
-
-### Spotify Downloader
-
-For **downloading** songs of a whole playlist, use [spotdl](https://github.com/spotDL/spotify-downloader). See below for the cli usage (find [docs](https://spotdl.github.io/spotify-downloader/usage/)):
-
-```bash
-    spotdl "SPOTIFY_PLAYLIST_URL" --output ~/Downloads
-    spotdl download "YOUTUBE_URL|SPOTIFY_URL" --output ~/Downloads
-```
+![[services/spotify_downloader/README|spotify downloader README]]

@@ -20,6 +20,8 @@ The documentation is split up into several sections. See the table of contents b
 
 ## Getting started
 
+### macOS
+
 make sure that you have `uv` installed - you can install that with [brew](https://brew.sh). Then make sure you configure the virtual environment in the project with:
 
 ```bash
