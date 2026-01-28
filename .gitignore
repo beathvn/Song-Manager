@@ -15,7 +15,6 @@ download.yaml
 spotiplaylist.yaml
 connection.yaml
 *.pdf
-*.ipynb
 *.env
 *.csv
 *.parquet
