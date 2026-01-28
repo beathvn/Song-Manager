@@ -19,6 +19,7 @@ connection.yaml
 *.env
 *.csv
 *.parquet
+.obsidian/graph.json
 
 # specific files
 .obsidian/workspace.json
