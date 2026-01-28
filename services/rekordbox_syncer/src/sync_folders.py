@@ -15,7 +15,7 @@ sys.path.append("./src")
 from dirsync import sync
 
 # user imports
-from shared.logging_config import setup_logging
+from song_common.logging_config import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)

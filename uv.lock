@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -1629,6 +1629,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pydub" },
     { name = "pyyaml" },
+    { name = "rekordbox-client" },
     { name = "song-common" },
     { name = "spotdl" },
     { name = "spotify-client" },
@@ -1654,6 +1655,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pydub", specifier = ">=0.25.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "rekordbox-client", editable = "libs/rekordbox_client" },
     { name = "song-common", editable = "libs/song_common" },
     { name = "spotdl", specifier = ">=4.4.3" },
     { name = "spotify-client", editable = "libs/spotify_client" },

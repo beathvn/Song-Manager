@@ -11,26 +11,22 @@ sys.path.append("./src")
 # 3rd party imports
 import xmltodict
 
-# user imports
-from shared.logging_config import setup_logging
-
-setup_logging()
 logger = logging.getLogger(__name__)
 
 
-class RB_handler():
+class RB_handler:
     def __init__(self, rb_input_path: str) -> None:
         """constructor of class
 
         Args:
             rb_input_path (str): path to xml file of rekordbox database
         """
-        logger.info('Starting up RB handler...')
+        logger.info("Starting up RB handler...")
         # reading the xml files into a pandas data series
         self.rawdata_rb = self._get_input_data_from_xml(rb_input_path)
 
         # ignoring not interesting columns
-        self.data = self.rawdata_rb['DJ_PLAYLISTS']['COLLECTION']['TRACK']
+        self.data = self.rawdata_rb["DJ_PLAYLISTS"]["COLLECTION"]["TRACK"]
 
         return
 
@@ -43,9 +39,9 @@ class RB_handler():
         Returns:
             dict: the converted xml file as a dict
         """
-        with open(filepath, 'r') as xml_file:
+        with open(filepath, "r") as xml_file:
             input_data = xmltodict.parse(xml_file.read())
-            logger.info('Successfully loaded the XML File!')
+            logger.info("Successfully loaded the XML File!")
             return input_data
 
     def export_data_to_xml(self, out_path: str) -> None:
@@ -54,14 +50,16 @@ class RB_handler():
         Args:
             out_path (str): filepath to where you want to change it
         """
-        logger.info('Exporting to XML...')
-        with open(out_path, 'w') as xml_outfile:
+        logger.info("Exporting to XML...")
+        with open(out_path, "w") as xml_outfile:
             xml_outfile.write(xmltodict.unparse(self.rawdata_rb, pretty=True))
 
-        logger.info('Exporting to XML...Done!')
+        logger.info("Exporting to XML...Done!")
         return
 
-    def change_tracks_source_path(self, old_location: str, new_location: str, location_of_interest: str) -> None:
+    def change_tracks_source_path(
+        self, old_location: str, new_location: str, location_of_interest: str
+    ) -> None:
         """chaniging the source location of the tracks, found in old_location, to new_location.
         Tracks, which aren't stroed in old_location are removed from self.data
 
@@ -77,28 +75,39 @@ class RB_handler():
 
         # going threw all the tracks
         for i in self.data:
-            curr_location = i['@Location']
+            curr_location = i["@Location"]
             if location_of_interest in curr_location:
-                changed_location = curr_location.replace(
-                    old_location, new_location)
+                changed_location = curr_location.replace(old_location, new_location)
                 cnt_changed_tracks += 1
-                i['@Location'] = changed_location
-            else:    
-                logger.warning(f'Not in {location_of_interest}: ' + i['@Name'].ljust(60) + curr_location)
+                i["@Location"] = changed_location
+            else:
+                logger.warning(
+                    f"Not in {location_of_interest}: "
+                    + i["@Name"].ljust(60)
+                    + curr_location
+                )
                 cnt_removed_tracks += 1
-                i['@Location'] = None
+                i["@Location"] = None
 
-        self.data = [i for i in self.data if i['@Location'] is not None]
+        self.data = [i for i in self.data if i["@Location"] is not None]
 
-        logger.info(f'Went threw {cnt_removed_tracks + cnt_changed_tracks} tracks.'
-              + f'\nChanged location of {cnt_changed_tracks} trakcks from \"{old_location}\" to \"{new_location}\".'
-              + f'\nRemoved {cnt_removed_tracks} tracks.')
+        logger.info(
+            f"Went threw {cnt_removed_tracks + cnt_changed_tracks} tracks."
+            + f'\nChanged location of {cnt_changed_tracks} trakcks from "{old_location}" to "{new_location}".'
+            + f"\nRemoved {cnt_removed_tracks} tracks."
+        )
 
         return
 
 
-class RB_handler_five_six():
-    def __init__(self, rb5_input_path: str, rb6_input_path: str, location_of_interest: str, keys_to_update: list) -> None:
+class RB_handler_five_six:
+    def __init__(
+        self,
+        rb5_input_path: str,
+        rb6_input_path: str,
+        location_of_interest: str,
+        keys_to_update: list,
+    ) -> None:
         """constructor of class
 
         Args:
@@ -112,9 +121,9 @@ class RB_handler_five_six():
         self.rawdata_rb5 = self._get_input_data_from_xml(rb5_input_path)
         self.rawdata_rb6 = self._get_input_data_from_xml(rb6_input_path)
 
-        self.data5 = self.rawdata_rb5['DJ_PLAYLISTS']['COLLECTION']['TRACK']
-        self.data6 = self.rawdata_rb6['DJ_PLAYLISTS']['COLLECTION']['TRACK']
-        logger.info('Successfully loaded the XML Files from Rekordbox 5 and 6')
+        self.data5 = self.rawdata_rb5["DJ_PLAYLISTS"]["COLLECTION"]["TRACK"]
+        self.data6 = self.rawdata_rb6["DJ_PLAYLISTS"]["COLLECTION"]["TRACK"]
+        logger.info("Successfully loaded the XML Files from Rekordbox 5 and 6")
 
         self.location_of_interest = location_of_interest
 
@@ -135,34 +144,32 @@ class RB_handler_five_six():
         indecies_of_rb5 = list(self.map_from_5_to_6.keys())
 
         if number_of_tracks > 0:
-            logger.info(f'Updating {number_of_tracks} tracks...')
+            logger.info(f"Updating {number_of_tracks} tracks...")
             indecies_of_rb5 = indecies_of_rb5[:number_of_tracks]
         else:
-            logger.info('Updating all tracks...')
+            logger.info("Updating all tracks...")
 
         for curr_rb5_index in indecies_of_rb5:
-            self._update_file(
-                curr_rb5_index, self.map_from_5_to_6[curr_rb5_index])
+            self._update_file(curr_rb5_index, self.map_from_5_to_6[curr_rb5_index])
 
         self._update_playlists()
 
         return
 
     def _update_playlists(self) -> None:
-        """updates the playlists on position 3 and 4 of the loaded data6 according to 5
-        """
+        """updates the playlists on position 3 and 4 of the loaded data6 according to 5"""
 
-        logger.info('Converting playlists...')
+        logger.info("Converting playlists...")
 
         # in this dict we have as key the trackid of rb5 and value is key of rb6
         trackid_mapping = self._get_trackid_mapping()
 
         # these variable holds the root folder from rekordbox; we just need 5, since 6 gets deleted anyway
-        root_folders_rb5 = self.rawdata_rb5['DJ_PLAYLISTS']['PLAYLISTS']['NODE']['NODE']
+        root_folders_rb5 = self.rawdata_rb5["DJ_PLAYLISTS"]["PLAYLISTS"]["NODE"]["NODE"]
 
         # getting the folders you want to change; assign rb6 the values from rb5
-        folder_one = root_folders_rb5[3]['NODE'].copy()
-        folder_two = root_folders_rb5[4]['NODE'].copy()
+        folder_one = root_folders_rb5[3]["NODE"].copy()
+        folder_two = root_folders_rb5[4]["NODE"].copy()
 
         # saving them in a list, so we can then iterate over them
         folders_to_convert = [folder_one, folder_two]
@@ -170,19 +177,19 @@ class RB_handler_five_six():
         for curr_folder in folders_to_convert:
             for curr_playlist in curr_folder:
                 # check if the playlist is empty
-                if curr_playlist['@Entries'] != '0':
-                    for curr_song in curr_playlist['TRACK']:
+                if curr_playlist["@Entries"] != "0":
+                    for curr_song in curr_playlist["TRACK"]:
                         try:
-                            curr_song['@Key'] = trackid_mapping[curr_song['@Key']]
+                            curr_song["@Key"] = trackid_mapping[curr_song["@Key"]]
                         except:
-                            logger.warning(f'Could not convert song {curr_song}')
+                            logger.warning(f"Could not convert song {curr_song}")
 
         # updating the raw_data of rb6
-        root_folders_rb6 = self.rawdata_rb6['DJ_PLAYLISTS']['PLAYLISTS']['NODE']['NODE']
-        root_folders_rb6[3]['NODE'] = folder_one
-        root_folders_rb6[4]['NODE'] = folder_two
+        root_folders_rb6 = self.rawdata_rb6["DJ_PLAYLISTS"]["PLAYLISTS"]["NODE"]["NODE"]
+        root_folders_rb6[3]["NODE"] = folder_one
+        root_folders_rb6[4]["NODE"] = folder_two
 
-        logger.info('Converting playlists...Done!')
+        logger.info("Converting playlists...Done!")
 
         return
 
@@ -194,8 +201,9 @@ class RB_handler_five_six():
         """
         track_id_mapping = {}
         for curr_track_index in self.map_from_5_to_6:
-            track_id_mapping[self.data5[curr_track_index]['@TrackID']
-                             ] = self.data6[self.map_from_5_to_6[curr_track_index]]['@TrackID']
+            track_id_mapping[self.data5[curr_track_index]["@TrackID"]] = self.data6[
+                self.map_from_5_to_6[curr_track_index]
+            ]["@TrackID"]
 
         return track_id_mapping
 
@@ -228,8 +236,8 @@ class RB_handler_five_six():
             else:
                 # if there are information in rb6, which are not available in rb5, just delete those
                 if curr_key in data_to_update.keys():
-                    trackname = data_to_update['@Name']
-                    logger.warning(f'Deleted the {curr_key} information in {trackname}')
+                    trackname = data_to_update["@Name"]
+                    logger.warning(f"Deleted the {curr_key} information in {trackname}")
                     del data_to_update[curr_key]
 
         # writing in the output message, the name of the track, which was updated
@@ -244,10 +252,8 @@ class RB_handler_five_six():
         """generates and saves a dict which translates the index locations of the tracks.
         key is the index of the track in rekordbox 5 and value is the index you can find the same track in the data of rekordbox 6
         """
-        rb5_index_to_location_dict = self._get_index_location_dict(
-            self.data5)
-        rb6_index_to_location_dict = self._get_index_location_dict(
-            self.data6)
+        rb5_index_to_location_dict = self._get_index_location_dict(self.data5)
+        rb6_index_to_location_dict = self._get_index_location_dict(self.data6)
 
         # init an empty dict
         map_from_5_to_6 = {}
@@ -256,14 +262,17 @@ class RB_handler_five_six():
         failed = []
         for curr_key_5 in rb5_index_to_location_dict:
             try:
-                map_from_5_to_6[curr_key_5] = list(rb6_index_to_location_dict.keys())[list(
-                    rb6_index_to_location_dict.values()).index(rb5_index_to_location_dict[curr_key_5])]
+                map_from_5_to_6[curr_key_5] = list(rb6_index_to_location_dict.keys())[
+                    list(rb6_index_to_location_dict.values()).index(
+                        rb5_index_to_location_dict[curr_key_5]
+                    )
+                ]
             except:
                 failed.append(curr_key_5)
         self.map_from_5_to_6 = map_from_5_to_6
 
         # writing the files that couldn't be matched
-        logger.warning('FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:')
+        logger.warning("FILES THAT COULD NOT BE MATCHED FROM 5 TO 6:")
         for failed_index in failed:
             logger.warning(rb5_index_to_location_dict[failed_index])
 
@@ -272,7 +281,7 @@ class RB_handler_five_six():
         return
 
     def _get_index_location_dict(self, data: list) -> dict:
-        """First the tracks are filtered based on the previously set location_of_interest information. 
+        """First the tracks are filtered based on the previously set location_of_interest information.
         Then sets up a dict to map the indecies to the corresponding @Location information
 
         Args:
@@ -286,7 +295,7 @@ class RB_handler_five_six():
         notinterested_indecies = []
 
         for index, currTrack in enumerate(data):
-            if currTrack['@Location'].startswith(self.location_of_interest):
+            if currTrack["@Location"].startswith(self.location_of_interest):
                 interesting_indecies.append(index)
             else:
                 notinterested_indecies.append(index)
@@ -294,11 +303,13 @@ class RB_handler_five_six():
         # make sure it has the key @Location
         mapped_dict = {}
         for curr_index in interesting_indecies:
-            mapped_dict[curr_index] = data[curr_index]['@Location']
+            mapped_dict[curr_index] = data[curr_index]["@Location"]
 
         for i in notinterested_indecies:
             logger.warning(
-                f"Failed to map {data[i]['@Name' ]}".ljust(60) + f"in locatoin: {data[i]['@Location']}")
+                f"Failed to map {data[i]['@Name' ]}".ljust(60)
+                + f"in locatoin: {data[i]['@Location']}"
+            )
 
         return mapped_dict
 
@@ -311,7 +322,7 @@ class RB_handler_five_six():
         Returns:
             dict: the converted xml file as a dict
         """
-        with open(filepath, 'r') as xml_file:
+        with open(filepath, "r") as xml_file:
             input_data = xmltodict.parse(xml_file.read())
             return input_data
 
@@ -321,10 +332,10 @@ class RB_handler_five_six():
         Args:
             out_path (str): filepath to where you want to change it
         """
-        logger.info('Exporting to XML...')
-        with open(out_path, 'w') as xml_outfile:
+        logger.info("Exporting to XML...")
+        with open(out_path, "w") as xml_outfile:
             xml_outfile.write(xmltodict.unparse(self.rawdata_rb6))
 
-        logger.info('Exporting to XML...Done!')
+        logger.info("Exporting to XML...Done!")
 
         return

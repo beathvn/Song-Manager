@@ -8,12 +8,10 @@
 # system imports
 from argparse import ArgumentParser
 import logging
-import sys
 
-sys.path.append("./src")
 # user imports
-from shared.RB_handler import RB_handler
-from shared.logging_config import setup_logging
+from rekordbox_client.RB_handler import RB_handler
+from song_common.logging_config import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)

@@ -12,6 +12,7 @@ dependencies = [
     "pandas>=2.2.3",
     "pydub>=0.25.1",
     "pyyaml>=6.0.2",
+    "rekordbox-client",
     "song-common",
     "spotdl>=4.4.3",
     "spotify-client",
@@ -32,6 +33,7 @@ dev = [
 dirsync = { git = "https://github.com/beathvn/dirsync.git", rev = "develop" }
 spotify-client = { workspace = true }
 song-common = { workspace = true }
+rekordbox-client = { workspace = true }
 
 [tool.uv.workspace]
 members = ["libs/spotify_client", "libs/rekordbox_client", "libs/song_common"]
