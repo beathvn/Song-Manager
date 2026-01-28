@@ -15,12 +15,12 @@ The documentation is split up into several sections. See the table of contents b
 
 - [[spotify]]
 - [[rekordbox]]
-- [[other]]
-- [[development]]
 
 ## Getting started
 
-### macOS
+To read this documentation, it is suggested that you install [Obsidian](https://obsidian.md/) and open this repository with that.
+
+### Development Setup (on macOS)
 
 make sure that you have `uv` installed - you can install that with [brew](https://brew.sh). Then make sure you configure the virtual environment in the project with:
 

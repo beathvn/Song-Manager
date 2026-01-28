@@ -1,12 +1,18 @@
 # Rekordbox
 
-This section is all about the [rekordbox](https://rekordbox.com/) functionality of this repo. For this to work, you need the `.xml` export of your rekordbox library (used with rekordbox v7).
+This section is all about the [rekordbox](https://rekordbox.com/)-related functionality of this repo. For most of this to work, you need the `.xml` export of your rekordbox library (used with rekordbox v7).
 
 ## Feature overview
 
-![[services/rekordbox_syncer/README|README]]
+### Rekordbox Sync Service
 
-![[services/rekordbox_maintenance/README|README]]
+![[services/rekordbox_syncer/README#Summary|README]]
 
-![[services/rekordbox_migration/README|README]]
+### Rekordbox Maintenance
+
+![[services/rekordbox_maintenance/README#Summary|README]]
+
+### Rekordbox Migration
+
+![[services/rekordbox_migration/README#Summary|README]]
 

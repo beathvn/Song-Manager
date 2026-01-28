@@ -1,5 +1,7 @@
 # Spotify Downloader Service
 
+## Summary
+
 this service helps you download tracks from Spotify by saving information of a playlist to a CSV file.
 
 > [!NOTE] download in CLI
