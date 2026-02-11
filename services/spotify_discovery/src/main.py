@@ -85,6 +85,9 @@ def main(config_path: str, database_folder: str) -> None:
         if track["track"]["id"] not in existing_ids
     ]
 
+    # preparing for concatenation
+    new_fav_tracks = pd.DataFrame([f.model_dump() for f in new_fav_tracks])
+
     ################## step 3 ##################
     today = date.today()
     new_pla_tracks = []
@@ -147,7 +150,7 @@ def main(config_path: str, database_folder: str) -> None:
 
     ################## step 4 ##################
     df_tracks_updated: pd.DataFrame = pd.concat(
-        [df_tracks] + new_fav_tracks + new_pla_tracks + new_art_tracks,
+        [df_tracks] + [new_fav_tracks] + new_pla_tracks + new_art_tracks,
         ignore_index=True,
     )
 
