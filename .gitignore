@@ -1,11 +1,11 @@
 # Folders
 data/
 logs/
-scripts/*
+/scripts/
 *__pycache__
 tutorials
 .venv/
-env/
+**/env/*
 
 # filetypes
 *.DS_Store
@@ -18,3 +18,4 @@ env/
 # obsidian
 .obsidian/graph.json
 .obsidian/workspace.json
+!**/env/.env.example
