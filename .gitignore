@@ -7,18 +7,14 @@ tutorials
 .venv/
 env/
 
-# files
+# filetypes
 *.DS_Store
 *.cache*
-diff_xml.yaml
-download.yaml
-spotiplaylist.yaml
-connection.yaml
 *.pdf
 *.env
 *.csv
 *.parquet
-.obsidian/graph.json
 
-# specific files
+# obsidian
+.obsidian/graph.json
 .obsidian/workspace.json

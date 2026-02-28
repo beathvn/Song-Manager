@@ -1,0 +1,43 @@
+{
+  "id": "user-id-123",
+  "auth": {
+    "client_id": "your_client_id",
+    "client_secret": "your_client_secret",
+    "redirect_uri": "https://example.org/callback"
+  },
+  "spotify_user_name": "your.username",
+  "playlists": [
+    {
+      "id": "0ZhTd0v0esEM40nX1S66g0",
+      "url": "https://open.spotify.com/playlist/0ZhTd0v0esEM40nX1S66g0?si=5a7c2e558ea84bfc",
+      "name": "STMPD RCRDS New Releases",
+      "allowed_tracks": 2
+    },
+    {
+      "id": "4oOZJEq1TBUti6PSouTo5M",
+      "url": "https://open.spotify.com/playlist/4oOZJEq1TBUti6PSouTo5M?si=af1d23279d664320",
+      "name": "UKF Drum and Bass",
+      "allowed_tracks": 2
+    }
+  ],
+  "artists": [
+    {
+      "id": "1QJ4iU6xJtdrk6HSPUTQ98",
+      "url": "https://open.spotify.com/intl-de/artist/1QJ4iU6xJtdrk6HSPUTQ98?si=nl4SdPegT0qp_9egLRtZ_w",
+      "name": "Big Z",
+      "allowed_tracks": 3
+    },
+    {
+      "id": "06HL4z0CvFAxyc27GXpf02",
+      "url": "https://open.spotify.com/intl-de/artist/06HL4z0CvFAxyc27GXpf02?si=uFNbeVgmSzOr55q99MivcA",
+      "name": "Taylor Swift",
+      "allowed_tracks": 3
+    },
+    {
+      "id": "2qxJFvFYMEDqd7ui6kSAcq",
+      "url": "https://open.spotify.com/intl-de/artist/2qxJFvFYMEDqd7ui6kSAcq?si=HhpHM8IHRFCC5Y8jxq5QPg",
+      "name": "Zedd",
+      "allowed_tracks": 3
+    }
+  ]
+}

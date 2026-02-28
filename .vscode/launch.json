@@ -10,9 +10,9 @@
             "justMyCode": true,
             "args": [
                 "--config",
-                "data/config_test.json",
+                "data/db/config_test.json",
                 "--database",
-                "data"
+                "data/db"
             ]
         },
         {

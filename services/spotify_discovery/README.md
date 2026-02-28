@@ -2,7 +2,7 @@
 
 ## Summary
 
-The purpose of this service is to discover new tracks on Spotify based on some procedures and user preferences.
+The purpose of this service is to discover new tracks on Spotify based on a given and pre-defined search process, which incorporates also user preferences.
 
 Here is what it does right now: create a spotify playlist of newly added songs to specified playlists and artists.
 Under the hood, the [spotipy](https://github.com/spotipy-dev/spotipy) library is used.
