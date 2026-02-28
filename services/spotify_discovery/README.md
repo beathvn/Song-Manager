@@ -28,3 +28,7 @@ With this database, the following process is used to create the 'new tracks' pla
 	2. get current state of playlists and artists
 	3. add `n` new tracks for playlist and artist to the table, based on user preferences (the `n` most popular ones will be added) - make sure not to add duplicates
 2. Create the playlist based on the new tracks added today: only include tracks, that are added from playlists or artists, not from favorites.
+
+## getting started
+
+there is a script that performs the update process. It expects a `.env.local` file to be present in the `env/` folder. It must contain all the same keys as the `.env.example`
