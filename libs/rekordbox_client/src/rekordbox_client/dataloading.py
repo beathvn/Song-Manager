@@ -58,6 +58,7 @@ def load_dataframe_from_rekordbox_xml(filepath: str) -> pd.DataFrame:
         pd.DataFrame: A DataFrame containing the data from the Rekordbox XML file.
 
     Raises:
+        FileNotFoundError: if the file provided is not found
         ValueError: If the provided file does not have a .xml extension.
     """
     # check if the given filepath is a .xml file

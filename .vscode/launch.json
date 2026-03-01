@@ -30,6 +30,20 @@
                 "--output-folder",
                 "./data/found_on_the_road"
             ]
+        },
+        {
+            "name": "export rb tracknames excel",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/services/rekordbox_maintenance/src/export_tracknames_excel.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--database",
+                "./data/rekordbox",
+                "--output-folder",
+                "./data/test"
+            ]
         }
     ]
 }
