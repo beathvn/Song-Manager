@@ -1,6 +1,6 @@
 # Rekordbox
 
-This section is all about the [rekordbox](https://rekordbox.com/)-related functionality of this repo. For most of this to work, you need the `.xml` export of your rekordbox library (used with rekordbox v7).
+This section is all about the [rekordbox](https://rekordbox.com/)-related functionality of this repo. For most of this to work, you need the `.xml` export of your rekordbox library (used with rekordbox v7). Most of the scripts expect that your database of rekordbox exports follow this naming convention: `rekordbox7_YYYY-MM-DD.xml`
 
 ## Feature overview
 
