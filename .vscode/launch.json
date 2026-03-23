@@ -44,6 +44,20 @@
                 "--output-folder",
                 "./data/test"
             ]
+        },
+        {
+            "name": "sync folders",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/services/rekordbox_syncer/src/sync_folders.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--master-folder",
+                "./data/rekordbox",
+                "--slave-folder",
+                "./data/test"
+            ]
         }
     ]
 }

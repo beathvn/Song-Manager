@@ -7,6 +7,7 @@ This service helps you synchronize your entire rekordbox library between multipl
 ## Example
 
 **Process example:**
+
 1. you work on your main pc, analyze the newest music
 2. export the latest `.xml` file
 3. sync local pc music folder with an external drive

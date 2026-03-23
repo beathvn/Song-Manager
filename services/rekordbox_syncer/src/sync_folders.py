@@ -77,6 +77,7 @@ def sync_folders(master_folder: str, slave_folder: str):
 
 
 def main(args):
+    # TODO: remove the hard coding here... use environment variables instead (maybe)
     logger.info("Start of program: sync_folders.py...")
     sync_folders(args.master_folder, args.slave_folder)
 
@@ -96,8 +97,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-m", "--master_folder")
-    parser.add_argument("-s", "--slave_folder")
+    parser.add_argument("-m", "--master-folder")
+    parser.add_argument("-s", "--slave-folder")
 
     args = parser.parse_args()
     main(args)
