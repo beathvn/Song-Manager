@@ -46,7 +46,7 @@
             ]
         },
         {
-            "name": "sync folders",
+            "name": "sync folders (test)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/services/rekordbox_syncer/src/sync_folders.py",
@@ -54,9 +54,9 @@
             "justMyCode": true,
             "args": [
                 "--master-folder",
-                "./data/rekordbox",
+                "./data/test_src",
                 "--slave-folder",
-                "./data/test"
+                "./data/test_target"
             ]
         }
     ]

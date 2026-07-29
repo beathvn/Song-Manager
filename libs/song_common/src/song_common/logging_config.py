@@ -14,6 +14,8 @@ def setup_logging():
     if root.handlers:  # guard against duplicate handlers
         return
 
+    root.setLevel(logging.INFO)
+
     formatter = logging.Formatter(
         fmt="{asctime} {name} - {levelname} - {message}",
         style="{",
