@@ -102,3 +102,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args)
+    log_path = os.path.abspath(
+        os.path.join("logs", f"{datetime.now():%Y-%m-%d}.log")
+    )
+    print(f"The logs have been stored to file {log_path}")
