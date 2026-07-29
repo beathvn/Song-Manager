@@ -41,11 +41,11 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-r", "--path_to_rb", default="")
-    parser.add_argument("-o", "--old_location", default="")
-    parser.add_argument("-n", "--new_location", default="")
-    parser.add_argument("-p", "--save_location", default="")
-    parser.add_argument("-l", "--location_of_interest", default="")
+    parser.add_argument("-r", "--path-to-rb", default="")
+    parser.add_argument("-o", "--old-location", default="")
+    parser.add_argument("-n", "--new-location", default="")
+    parser.add_argument("-p", "--save-location", default="")
+    parser.add_argument("-l", "--location-of-interest", default="")
 
     args = parser.parse_args()
     main(args)
