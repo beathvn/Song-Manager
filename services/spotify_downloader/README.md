@@ -18,6 +18,15 @@ spotdl download "YOUTUBE_URL|SPOTIFY_URL" --output ~/Downloads
 
 ## Troubleshooting
 
+### Revoked Spotify token when exporting a playlist
+
+If the Python export script fails with `SpotifyOauthError: error: invalid_grant,
+error_description: Refresh token revoked`, remove the cached token and run the
+script again. Spotipy will open a browser window so that you can authorize a new
+token. You find the token in a `.cache` file.
+
+### SpotDL timeout
+
 when you are getting a timeout error with spotdl, try using one of your own spotify applications. For that, you need to clear the spotdl cache with `rm -rf ~/.spotdl/.spotipy` and then call it with these parameters:
 
 - `--client-id CLIENT_ID`
