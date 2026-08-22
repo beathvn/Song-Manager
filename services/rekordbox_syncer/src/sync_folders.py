@@ -64,7 +64,28 @@ def update_versions_txt(version_file: str, folder_name: str) -> None:
         file.writelines(lines)
 
 
-def sync_folders(master_folder: str, slave_folder: str):
+def validate_folder_paths(master_folder: str, slave_folder: str) -> bool:
+    paths = {
+        "Master folder": master_folder,
+        "Destination folder": slave_folder,
+    }
+    missing_paths = [
+        f"{label}: {path or '<not provided>'}"
+        for label, path in paths.items()
+        if not path or not os.path.isdir(path)
+    ]
+
+    if missing_paths:
+        logger.error(
+            "Synchronization was not started. Missing folders:\n%s",
+            "\n".join(missing_paths),
+        )
+        return False
+
+    return True
+
+
+def sync_folders(master_folder: str, slave_folder: str) -> None:
     sync(
         master_folder,
         slave_folder,
@@ -76,7 +97,10 @@ def sync_folders(master_folder: str, slave_folder: str):
     )
 
 
-def main(args):
+def main(args) -> bool:
+    if not validate_folder_paths(args.master_folder, args.slave_folder):
+        return False
+
     logger.info("Start of program: sync_folders.py...")
     sync_folders(args.master_folder, args.slave_folder)
 
@@ -92,12 +116,17 @@ def main(args):
             'Syncing folder is not "Music Collection". Not updating Versions.txt'
         )
     logger.info("End of program: sync_folders.py\n")
+    return True
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-m", "--master_folder")
-    parser.add_argument("-s", "--slave_folder")
+    parser.add_argument("-m", "--master-folder")
+    parser.add_argument("-s", "--slave-folder")
 
     args = parser.parse_args()
-    main(args)
+    if not main(args):
+        raise SystemExit(1)
+
+    log_path = os.path.abspath(os.path.join("logs", f"{datetime.now():%Y-%m-%d}.log"))
+    print(f"The logs have been stored to file {log_path}")

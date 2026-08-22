@@ -1,33 +1,35 @@
-# Rekordbox Sync Service
+# Rekordbox Syncer Service
 
-## Summary
+This service distributes a primary Rekordbox library to a secondary library and
+helps refresh existing secondary-library entries from the primary XML. See the
+[project overview](../../docs/00%20Overview.md) for the complete workflow.
 
-This service helps you synchronize your entire rekordbox library between multiple laptops. For the metadata, the `.xml` rekordbox file is used.
+## Commands
 
-## Example
+- `scripts/sync_drive.sh <profile>` mirrors music and XML folders using a
+  local, ignored profile file. Copy `env/.env.sync.example` to create a profile
+  for each destination and direction.
+- `src/sync_folders.py` performs one folder mirror. It requires existing source
+  and destination folders and removes destination files absent from the source.
+- `scripts/change_location.sh <profile>` rewrites XML track paths using a local,
+  ignored profile. Copy `env/.env.change_location.example` to create one.
+- `src/change_location.py` performs the XML path rewrite and creates the output
+  XML file.
+- `src/plan_secondary_library_refresh.py --config <path>` compares primary and
+  secondary XML snapshots and reports configured metadata changes and obsolete
+  secondary entries for manual action in the secondary library; it never
+  modifies the primary library. Copy
+  `config/secondary_library_refresh.example.yaml` to the ignored
+  `config/secondary_library_refresh.yaml` to create the local configuration.
 
-**Process example:**
-1. you work on your main pc, analyze the newest music
-2. export the latest `.xml` file
-3. sync local pc music folder with an external drive
-4. go to second pc and sync music folder with external drive
-5. run script to update the location key of the `.xml` file to respect the location of the second pc (otherwise we cannot import the new songs)
-6. import the new songs and reanalyze (but only the phrase, because bpm etc. is already there in `.xml` file)
+> [!WARNING]
+> Do not add `@PlayCount` to the refresh comparison fields. Reimporting a track
+> into the secondary library can overwrite a newer DJ play-count value there.
+> Primary-library DJ play-count correction is planned as a separate workflow.
 
-- changing the location of an "old" to a "new location" by overwriting the "@Location" key in the xml file
-- Comparing two xml files to find differences, based on some set rules it looks for.
+Run the shell launchers from the repository root, or activate the project
+environment before calling a Python entry point directly:
 
----
-
-## What the scripts do
-
-- `change_location.py`: lets you change all the "@Location" information of a rekordbox xml file from an "old location" to a "new location". Why would you need this feature? Imagine, you have an different laptop for your dj sets (2nd laptop) than for the track preparation and stick syncing (1st laptop). The most up-to-date colleciton is found on the 1st laptop. So you can export the rekordbox xml file there and import it in the 2nd laptop. For this import to work, you need the "@Locaiton" key of the songs to be correct, otherwise rekordbox simply tells you that it couldn't import the songs, because they are not found.
-- `diff_xml.py`: compares two given xml files ("old" and "new") by looking at specific keys in the xml files. The newly added songs are currently not considered a difference. This script serves the purpose to find the songs the "new" xml file has changed in comparison to the old (such as the rating, grouping, file itself by looking at the filesize and length and more keys). You can configure for which keys the file needs to be delted and reimported (like when you change the audiofile itself), or simply reimported (when the changes are only in the metadata). Note: be sure the @Location base location for the audio files is identical for the two xml files - otherwise, everything is a difference.
-
----
-
-## Sync folders
-
-Synchronizing a slave folder to a master folder.
-
-Simply execute the **sync_folders.py** script with the program arguments you want to have. For more information see the first few rows on the source file.
+```bash
+source .venv/bin/activate
+```

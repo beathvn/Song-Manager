@@ -15,6 +15,8 @@ or readiness, update that overview in the same change so the architecture
 documentation and code do not drift apart. Keep it concise; service READMEs
 remain the place for command-specific setup and troubleshooting.
 
+Write Markdown prose as one physical line per paragraph. Use a blank line when starting a distinct topic or Markdown block; do not add soft line breaks solely to wrap text.
+
 ## Build, Test, and Development Commands
 
 - On macOS, activate the project environment with `source .venv/bin/activate`
@@ -28,7 +30,7 @@ Install `ffmpeg` on macOS (`brew install ffmpeg`) before using audio-normalizati
 
 ## Coding Style & Naming Conventions
 
-Use four-space indentation, double quotes, and an 88-character line limit, matching the Ruff configuration in `pyproject.toml`. Use `snake_case` for modules, functions, variables, scripts, and CLI flags; use `PascalCase` for classes and Pydantic models. Add type annotations to new Python functions and keep imports grouped as standard library, third-party, then internal packages. Prefer explicit CLI arguments and logging over hard-coded machine-specific paths or `print` statements.
+Use four-space indentation, double quotes, and an 88-character line limit, matching the Ruff configuration in `pyproject.toml`. Use `snake_case` for modules, functions, variables, and scripts; use kebab-case for public CLI flags; use `PascalCase` for classes and Pydantic models. Add type annotations to new Python functions and keep imports grouped as standard library, third-party, then internal packages. Prefer explicit CLI arguments and logging over hard-coded machine-specific paths or `print` statements. See `docs/10 Development Conventions.md` for examples.
 
 ## Testing Guidelines
 
