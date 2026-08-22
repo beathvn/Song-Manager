@@ -6,8 +6,19 @@ Song-Manager is a Python 3.11+ `uv` workspace for managing Spotify and Rekordbox
 
 Keep service-specific behavior inside its service; add reusable Spotify, Rekordbox, or logging code to the appropriate library package.
 
+## Documentation Synchronization
+
+`docs/00 Overview.md` is the concise source of truth for the project’s
+high-level workflows, responsible services, and implementation status. When a
+code change alters a service’s behavior, workflow, inputs, outputs, ownership,
+or readiness, update that overview in the same change so the architecture
+documentation and code do not drift apart. Keep it concise; service READMEs
+remain the place for command-specific setup and troubleshooting.
+
 ## Build, Test, and Development Commands
 
+- On macOS, activate the project environment with `source .venv/bin/activate`
+  before running Ruff or Python commands.
 - `uv sync` creates the project virtual environment and installs locked dependencies.
 - `pre-commit install` enables the repository hooks locally; `pre-commit run --all-files` runs them on demand.
 - `uv run ruff check .` reports lint issues, and `uv run ruff format --check .` verifies formatting.
