@@ -14,13 +14,13 @@ dependencies = [
     "pyyaml>=6.0.2",
     "rekordbox-client",
     "song-common",
-    "spotdl>=4.4.3",
+    "spotdl>=4.5.0",
     "spotify-client",
     "spotipy>=2.25.1",
     "streamlit>=1.45.0",
     "tqdm>=4.67.1",
     "xmltodict>=0.14.2",
-    "yt-dlp==2026.02.21",
+    "yt-dlp>=2026.02.21",
 ]
 
 [dependency-groups]

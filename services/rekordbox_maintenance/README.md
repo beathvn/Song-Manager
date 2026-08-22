@@ -2,16 +2,20 @@
 
 ## Summary
 
-This service *helps* taking care, maintaining and optimizing the rekordbox library. It is still your, as a DJs, job to know your library well, but this service can help.
+This service helps maintain and optimize a Rekordbox library. It remains the
+DJ's responsibility to know and manage their library.
 
-- Searching for duplicates in the rekordbox xml "@Location" key
-- `check_for_duplicates.py`: searches the "@Location" key of a rekordbox xml file to find duplicates.
+It currently exports a sorted Excel list of track titles and artists. Duplicate
+`@Location` checking is documented only; `check_for_duplicates.py` is not
+currently part of this service.
 
 ## Normalize Audio
 
 Normalizing audio using [pydub](https://github.com/jiaaro/pydub).
 
-Execute the **normalize_audio.py** script to normalize the audio files using pydub (<https://github.com/jiaaro/pydub>) found in folder A and save the normalized audio files in folder B. Both folder A and B are given to the program via program argument.
+`normalize_audio.py` selects tracks whose Rekordbox comment contains a keyword
+and copies them to a staging folder. Its normalization call is currently
+disabled, so it does not yet write normalized audio.
 
 **ATTENTION:** This script converts songs in the .m4a format to the .mp3 format. This is because pydub cannot handle the .m4a files.
 Why is that a problem? Because you can have a folder containing both a FILENAME.mp3 and a FILENAME.m4a file, that are actually two totally different songs. If you now use the normalize_audio.py script to normalize the FILENAME.m4a because it is very quiete and put it back in your folder, it will ask you if you want to replace the file, since FILENAME.mp3 already exists. But the FILENAME.mp3 is not the file you want to replace, since it is a totally different song. You need to delete the FILENAME.m4a file in your folder manually, place the newly created and normalized FILENAME.mp3 into the folder and select "keep both". Afterwards, you need to go (again manually - sorry for that) into the xml file of rekordbox and change manually the '@Location' key of the FILENAME.m4a to the new file.
