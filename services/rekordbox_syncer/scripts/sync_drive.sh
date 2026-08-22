@@ -1,26 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <path-to-local-profile>" >&2
-    exit 2
-fi
-
-profile_path="$1"
-if [[ ! -f "$profile_path" ]]; then
-    echo "Profile not found: $profile_path" >&2
-    echo "Copy env/.env.sync.example to an ignored local file first." >&2
-    exit 1
-fi
-
-profile_path="$(cd "$(dirname "$profile_path")" && pwd)/$(basename "$profile_path")"
 repository_root="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 cd "$repository_root"
 source .venv/bin/activate
 
 cd services/rekordbox_syncer
-source "$profile_path"
+environment_file="env/.env.drive"
+if [[ ! -f "$environment_file" ]]; then
+    echo "Environment file not found: $environment_file" >&2
+    echo "Copy env/.env.sync.example to $environment_file and configure it first." >&2
+    exit 1
+fi
+
+source "$environment_file"
+
+if [[ -z "${MASTER_MUSIC_FOLDER:-}" || -z "${SLAVE_MUSIC_FOLDER:-}" || -z "${MASTER_XML_FOLDER:-}" || -z "${SLAVE_XML_FOLDER:-}" ]]; then
+    echo "Environment file must set all music and XML source and destination folders." >&2
+    exit 1
+fi
 
 python src/sync_folders.py \
     --master-folder "$MASTER_MUSIC_FOLDER" \

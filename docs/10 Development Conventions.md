@@ -44,3 +44,7 @@ sync_folders(args.master_folder, args.slave_folder)
 Keep Python modules, functions, variables, and shell script filenames in
 snake_case. Environment-variable names remain uppercase with underscores, such
 as `MASTER_MUSIC_FOLDER`.
+
+## Finder launchers and local environment files
+
+Shell launchers intended to be started by double-clicking in Finder must not require command-line arguments. They may intentionally load a fixed ignored environment file from their own `env/` directory; this makes the Finder workflow reliable because no terminal argument can be supplied. Each service README must name its fixed local environment file and the matching tracked example file, when one exists.

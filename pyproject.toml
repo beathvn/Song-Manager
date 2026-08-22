@@ -13,6 +13,7 @@ dependencies = [
     "pydub>=0.25.1",
     "pyyaml>=6.0.2",
     "rekordbox-client",
+    "reportlab>=5.0.1",
     "song-common",
     "spotdl>=4.5.0",
     "spotify-client",

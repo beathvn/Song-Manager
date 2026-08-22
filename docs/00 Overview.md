@@ -106,7 +106,7 @@ flowchart LR
 
 | Name | State | Description |
 | --- | --- | --- |
-| Export track list | Operational | Exports a sorted title/artist list to Excel. |
+| Export track list | Operational | Exports a sorted title/artist list as CSV, PDF, or Excel. |
 | Check duplicate locations | Documented/research only | Checks duplicate `@Location` values in an XML export; the referenced `check_for_duplicates.py` is not currently in the service. |
 | Repair quiet tracks | Experimental | Selects tracks marked as quiet and copies them for repair; the normalization call is currently disabled. |
 | Correct primary-library DJ play counts | Planned | Will plan corrections from XML snapshots; no workflow or script exists yet. |
