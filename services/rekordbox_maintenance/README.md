@@ -23,15 +23,8 @@ python src/export_track_list.py --database /path/to/xmls --output-folder /path/t
 
 Supported output formats are `csv`, `pdf`, and `xlsx`; `pdf` is the default. The PDF contains a sorted, paginated table with song name and artist columns.
 
-## Normalize Audio
+## Normalize audio research
 
-Normalizing audio using [pydub](https://github.com/jiaaro/pydub).
+Audio normalization is currently explored only in `research/30_normalize_audio.ipynb`; there is no supported Python command or Finder launcher. Copy `env/.env.normalize_audio.example` to the ignored `env/.env.normalize_audio` file and configure it before opening the notebook. The notebook contains local-path experiments that select tracks marked as quiet, copy them to a staging folder, and normalize the staged files with [pydub](https://github.com/jiaaro/pydub).
 
-`normalize_audio.py` selects tracks whose Rekordbox comment contains a keyword
-and copies them to a staging folder. Its normalization call is currently
-disabled, so it does not yet write normalized audio.
-
-**ATTENTION:** This script converts songs in the .m4a format to the .mp3 format. This is because pydub cannot handle the .m4a files.
-Why is that a problem? Because you can have a folder containing both a FILENAME.mp3 and a FILENAME.m4a file, that are actually two totally different songs. If you now use the normalize_audio.py script to normalize the FILENAME.m4a because it is very quiete and put it back in your folder, it will ask you if you want to replace the file, since FILENAME.mp3 already exists. But the FILENAME.mp3 is not the file you want to replace, since it is a totally different song. You need to delete the FILENAME.m4a file in your folder manually, place the newly created and normalized FILENAME.mp3 into the folder and select "keep both". Afterwards, you need to go (again manually - sorry for that) into the xml file of rekordbox and change manually the '@Location' key of the FILENAME.m4a to the new file.
-
-Sadly you cannot use the relocate button in rekordbox, since it lets you only relocate files from the same format.
+**Attention:** The experiment converts `.m4a` files to `.mp3`. A pre-existing MP3 with the same filename can be a different song, so replacement must be reviewed manually. After choosing the correct output file, update the corresponding Rekordbox XML `@Location` manually; Rekordbox cannot relocate files across formats.

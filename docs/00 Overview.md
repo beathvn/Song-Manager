@@ -10,6 +10,7 @@ Song-Manager supports the following music-library workflows:
 | Refresh secondary-library metadata | Manual |
 | Migrate legacy Rekordbox XML | Manual / legacy |
 | Run health checks on the Rekordbox library | Partial — see individual checks below |
+| Normalize selected Rekordbox tracks | Experimental / research |
 
 ## Core workflows
 
@@ -96,10 +97,8 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    XML[Rekordbox XML snapshot] --> TrackList[Export titles and artists to Excel]
+    XML[Rekordbox XML snapshot] --> TrackList[Export track title and artist list]
     XML --> Duplicates[Check duplicate file locations]
-    XML --> Quiet[Select quiet tracks by comment]
-    Quiet --> Normalize[Normalize audio]
 ```
 
 **Responsible service:** `rekordbox_maintenance`  
@@ -108,10 +107,24 @@ flowchart LR
 | --- | --- | --- |
 | Export track list | Operational | Exports a sorted title/artist list as CSV, PDF, or Excel. |
 | Check duplicate locations | Documented/research only | Checks duplicate `@Location` values in an XML export; the referenced `check_for_duplicates.py` is not currently in the service. |
-| Repair quiet tracks | Experimental | Selects tracks marked as quiet and copies them for repair; the normalization call is currently disabled. |
 | Correct primary-library DJ play counts | Planned | Will plan corrections from XML snapshots; no workflow or script exists yet. |
 
-Statuses describe the current code paths, not automated test coverage; the repository does not yet have a dedicated test suite. Last reviewed: **2026-08-22**.
+### 7. Normalize selected Rekordbox tracks
+
+```mermaid
+flowchart LR
+    XML[Rekordbox XML snapshot] --> Select[Select tracks marked as quiet]
+    Select --> Stage[Copy audio to a staging folder]
+    Stage --> Normalize[Normalize audio]
+    Normalize --> Review[Manually review and replace tracks]
+```
+
+`research/30_normalize_audio.ipynb` contains exploratory local-path code that selects tracks whose Rekordbox comments contain the quiet-track keyword, copies their files to a staging folder, and normalizes the staged audio. There is no maintained command or Finder launcher. The final replacement and any Rekordbox location update remain manual.
+
+**Responsible service:** `rekordbox_maintenance`<br>
+**Status:** Experimental / research only.
+
+Statuses describe the current code paths, not automated test coverage; the repository does not yet have a dedicated test suite. Last reviewed: **2026-08-23**.
 
 ## Detail when needed
 
