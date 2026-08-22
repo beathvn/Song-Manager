@@ -48,3 +48,13 @@ as `MASTER_MUSIC_FOLDER`.
 ## Finder launchers and local environment files
 
 Shell launchers intended to be started by double-clicking in Finder must not require command-line arguments. They may intentionally load a fixed ignored environment file from their own `env/` directory; this makes the Finder workflow reliable because no terminal argument can be supplied. Each service README must name its fixed local environment file and the matching tracked example file, when one exists.
+
+## Optional root-level launcher links
+
+For convenient Finder access, create a symbolic link in the ignored repository-root `scripts/` directory that points to a service launcher. Run this command from the repository root, choosing the target service script and shortcut name:
+
+```bash
+ln -s "$(pwd)/services/rekordbox_maintenance/scripts/export_track_list.sh" scripts/export_track_list.sh
+```
+
+The link is a local convenience and is not versioned because its absolute target path is machine-specific. Keep the real launcher in its service's `scripts/` directory; update or recreate the link when that launcher is renamed.
