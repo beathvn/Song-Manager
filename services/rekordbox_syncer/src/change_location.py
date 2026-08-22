@@ -8,6 +8,7 @@
 # system imports
 from argparse import ArgumentParser
 import logging
+import os
 
 # user imports
 from rekordbox_client.RB_handler import RB_handler
@@ -17,15 +18,44 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
-def main(args):
+def validate_paths(args) -> bool:
+    if not args.path_to_rb or not os.path.isfile(args.path_to_rb):
+        logger.error(
+            "Location update was not started. Rekordbox XML file does not exist: %s",
+            args.path_to_rb or "<not provided>",
+        )
+        return False
+
+    if not args.save_location:
+        logger.error(
+            "Location update was not started. No output XML path was provided."
+        )
+        return False
+
+    output_directory = os.path.dirname(args.save_location) or "."
+    if not os.path.isdir(output_directory):
+        logger.error(
+            "Location update was not started. Output directory does not exist: %s",
+            output_directory,
+        )
+        return False
+
+    if args.old_location == "" or args.new_location == "":
+        logger.error(
+            "Location update was not started. Both old and new locations are required."
+        )
+        return False
+
+    return True
+
+
+def main(args) -> bool:
+    if not validate_paths(args):
+        return False
+
     logger.info("Start of program: change_location.py...")
     # instantiating the RB Handler and giving him the name benny ;)
     benny = RB_handler(args.path_to_rb)
-
-    if args.old_location == "" or args.new_location == "":
-        raise ValueError(
-            "Please provide a location where the tracks are stored and where you want them to be stored."
-        )
 
     # changing the tracks location
     benny.change_tracks_source_path(
@@ -37,6 +67,7 @@ def main(args):
     # saving the changed xml
     benny.export_data_to_xml(out_path=args.save_location)
     logger.info("End of program: change_location.py\n")
+    return True
 
 
 if __name__ == "__main__":
@@ -48,4 +79,5 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--location-of-interest", default="")
 
     args = parser.parse_args()
-    main(args)
+    if not main(args):
+        raise SystemExit(1)

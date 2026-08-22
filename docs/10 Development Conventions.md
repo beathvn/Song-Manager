@@ -21,6 +21,10 @@ workspace package under `libs/` (`spotify_client`, `rekordbox_client`, or
 workflow and status documentation in `docs/`, while service READMEs contain
 service-specific setup, commands, and troubleshooting.
 
+## Markdown prose
+
+Write prose as one physical line per paragraph. Start a new paragraph when introducing a distinct concept or topic. Do not add soft line breaks solely to wrap text at a fixed line length.
+
 ## Command-line options
 
 Use kebab-case for public command-line options:

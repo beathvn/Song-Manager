@@ -12,6 +12,7 @@
 Song-Manager is a collection of scripts to manage your music collection. This includes features for spotify and rekordbox as well as some other functionalities.
 
 Start with the concise [architecture and status overview](docs/00%20Overview.md).
+For shared implementation conventions, see the [development conventions](docs/10%20Development%20Conventions.md).
 Each service README contains its own setup, commands, and troubleshooting.
 
 ## Getting started

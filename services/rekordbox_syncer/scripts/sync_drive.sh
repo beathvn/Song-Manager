@@ -9,7 +9,7 @@ fi
 profile_path="$1"
 if [[ ! -f "$profile_path" ]]; then
     echo "Profile not found: $profile_path" >&2
-    echo "Copy env/.env.change_location.example to an ignored local file first." >&2
+    echo "Copy env/.env.sync.example to an ignored local file first." >&2
     exit 1
 fi
 
@@ -22,9 +22,9 @@ source .venv/bin/activate
 cd services/rekordbox_syncer
 source "$profile_path"
 
-python src/change_location.py \
-    --path-to-rb "$PATH_TO_RB" \
-    --old-location "$OLD_LOCATION" \
-    --new-location "$NEW_LOCATION" \
-    --save-location "$SAVE_LOCATION" \
-    --location-of-interest "$LOCATION_OF_INTEREST"
+python src/sync_folders.py \
+    --master-folder "$MASTER_MUSIC_FOLDER" \
+    --slave-folder "$SLAVE_MUSIC_FOLDER"
+python src/sync_folders.py \
+    --master-folder "$MASTER_XML_FOLDER" \
+    --slave-folder "$SLAVE_XML_FOLDER"

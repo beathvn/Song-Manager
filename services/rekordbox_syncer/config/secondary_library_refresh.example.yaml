@@ -1,0 +1,30 @@
+# Copy this file to secondary_library_refresh.yaml and replace the placeholders.
+# The primary and secondary snapshots must use the same location prefix. Rewrite
+# one snapshot first with change_location.py if necessary.
+primary_xml: "/path/to/current-primary-library.xml"
+secondary_xml: "/path/to/current-secondary-library.xml"
+location_prefix: "file://localhost/path/to/music/"
+
+# New tracks are handled by the normal distribution/import workflow.
+ignore_new_tracks: true
+
+# Changes to these fields result in a REIMPORT action on the secondary library.
+comparison_fields:
+  - "@Name"
+  - "@Artist"
+  - "@Grouping"
+  - "@Genre"
+  - "@Year"
+  - "@Comments"
+  - "@Rating"
+  - "@Colour"
+  - "@Location"
+  - "@DateAdded"
+
+# Do not include @PlayCount here. Correcting primary-library DJ play counts is
+# a separate planned maintenance workflow.
+
+# Changes to these fields result in a DELETE & REIMPORT action.
+delete_and_reimport_fields:
+  - "@Size"
+  - "@TotalTime"
