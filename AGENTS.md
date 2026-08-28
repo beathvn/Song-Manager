@@ -15,6 +15,8 @@ or readiness, update that overview in the same change so the architecture
 documentation and code do not drift apart. Keep it concise; service READMEs
 remain the place for command-specific setup and troubleshooting.
 
+When changing a detailed workflow in the overview, update its corresponding entry in the numbered feature table at the top of the same file.
+
 Write Markdown prose as one physical line per paragraph. Use a blank line when starting a distinct topic or Markdown block; do not add soft line breaks solely to wrap text.
 
 ## Build, Test, and Development Commands
@@ -30,12 +32,27 @@ Install `ffmpeg` on macOS (`brew install ffmpeg`) before using audio-normalizati
 
 ## Coding Style & Naming Conventions
 
-Use four-space indentation, double quotes, and an 88-character line limit, matching the Ruff configuration in `pyproject.toml`. Use `snake_case` for modules, functions, variables, and scripts; use kebab-case for public CLI flags; use `PascalCase` for classes and Pydantic models. Add type annotations to new Python functions and keep imports grouped as standard library, third-party, then internal packages. Prefer explicit CLI arguments and logging over hard-coded machine-specific paths or `print` statements. See `docs/10 Development Conventions.md` for examples.
+Use four-space indentation, double quotes, and an 88-character line limit, matching the Ruff configuration in `pyproject.toml`. Use `snake_case` for modules, functions, variables, and scripts; use kebab-case for public CLI flags; use `PascalCase` for classes and Pydantic models. Add type annotations to new Python functions and keep imports grouped as standard library, third-party, then internal packages. Prefer explicit CLI arguments and logging over hard-coded machine-specific paths or `print` statements.
+
+### Engineering Guidelines
+
+- Use the fewest precise words in human-facing text, including comments, commit messages, and replies. Avoid superlatives and praise.
+- Extract recurring, meaningful, or specification-defined values into descriptive constants or enums. Keep self-explanatory one-off values inline.
+- Prefer early returns and `continue` statements to reduce indentation. Keep function names under 30 characters.
+- Use enums, not booleans, for function parameters when a named state improves clarity.
+- Separate logical code blocks with blank lines. Add brief comments only for blocks created or modified, explaining what and why; use examples where helpful. Propose ASCII diagrams for complete systems.
+- Treat visibility changes as breaking design changes. Keep fields and functions private unless the design requires otherwise, and obtain explicit approval before changing private members to internal or public.
+- Encapsulate low-level mechanics in dedicated driver or abstraction layers. Expose high-level domain APIs to callers.
+- Respect adjacent-layer boundaries: a layer may call only its immediate layer below. Route UI or controller access to data stores, drivers, and low-level clients through intermediate services or abstractions.
+- Change only code related to the requested feature and minimize modified lines.
+- Finder launchers must not require command-line arguments. They may load a fixed ignored environment file from their own `env/` directory; the service README must name it and its tracked example, if any.
 
 ## Testing Guidelines
 
 There is currently no dedicated automated test suite. For changes, at minimum run Ruff and exercise the affected command with a safe copy of the XML, playlist, or media data. Add focused `pytest` tests under a new `tests/` directory when introducing logic that can be tested without Spotify credentials or local Rekordbox data; name them `test_<behavior>.py`.
 
+When fixing a bug, write a focused failing test first, observe it fail, then implement the fix and observe the test pass.
+
 ## Commit & Pull Request Guidelines
 
-Recent commits use short, imperative, lowercase summaries such as `updated yt-dlp` and `added script for downloader service`. Keep commits similarly focused and describe the affected service when useful. Pull requests should explain the behavior change, list validation performed, link related issues, and include screenshots or sample output for user-visible or data-format changes. Never commit `.env.local`, OAuth credentials, absolute library locations, or personal music/XML exports; update the relevant `.env.example` or example config instead.
+Use a capitalized, imperative subject of 50 characters or fewer (72 absolute maximum), without a period. Separate it from an optional body with one blank line. Manually wrap body lines at 72 characters; explain what and why, not how. Keep commits focused and describe the affected service when useful. Pull requests should explain the behavior change, list validation performed, link related issues, and include screenshots or sample output for user-visible or data-format changes. Never commit `.env.local`, OAuth credentials, absolute library locations, or personal music/XML exports; update the relevant `.env.example` or example config instead.

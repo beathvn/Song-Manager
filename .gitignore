@@ -12,6 +12,9 @@ services/rekordbox_syncer/scripts/*
 !services/rekordbox_syncer/scripts/sync_drive.sh
 services/rekordbox_syncer/config/*
 !**/env/.env.change_location.example
+!**/env/.env.export_track_list.example
+!**/env/.env.data_quality.example
+!**/env/.env.normalize_audio.example
 !**/env/.env.sync.example
 !services/rekordbox_syncer/config/secondary_library_refresh.example.yaml
 
