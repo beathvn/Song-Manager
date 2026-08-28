@@ -146,7 +146,7 @@ flowchart LR
     Review --> Curate[Manually refine metadata and collection]
 ```
 
-`research/90_visu_rb6.ipynb` is the current starting point for exploratory library analysis. It currently visualizes the artists most represented in a Rekordbox XML export. This workflow will help identify meaningful patterns in the collection and guide manual curation decisions, such as refining genres, tags, ratings, or playlist placement. It is not a supported Python command or Finder launcher.
+`research/90_analyze_rekordbox_library.ipynb` is the current starting point for exploratory library analysis. It currently visualizes the artists most represented in a Rekordbox XML export. This workflow will help identify meaningful patterns in the collection and guide manual curation decisions, such as refining genres, tags, ratings, or playlist placement. It is not a supported Python command or Finder launcher.
 
 **Responsible service:** `rekordbox_maintenance`<br>
 **Status:** Research only.
