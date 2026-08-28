@@ -15,6 +15,8 @@ or readiness, update that overview in the same change so the architecture
 documentation and code do not drift apart. Keep it concise; service READMEs
 remain the place for command-specific setup and troubleshooting.
 
+When changing a detailed workflow in the overview, update its corresponding entry in the numbered feature table at the top of the same file.
+
 Write Markdown prose as one physical line per paragraph. Use a blank line when starting a distinct topic or Markdown block; do not add soft line breaks solely to wrap text.
 
 ## Build, Test, and Development Commands

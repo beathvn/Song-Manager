@@ -2,10 +2,7 @@
 
 ## Summary
 
-This service helps maintain and optimize a Rekordbox library. It remains the
-DJ's responsibility to know and manage their library.
-
-It currently exports a sorted track title and artist list as a PDF, Excel workbook, or CSV file. Duplicate `@Location` checking is documented only; `check_for_duplicates.py` is not currently part of this service.
+This service contains Rekordbox maintenance commands and research notebooks. The DJ remains responsible for reviewing and managing the library.
 
 ## Export track list
 
@@ -23,8 +20,12 @@ python src/export_track_list.py --database /path/to/xmls --output-folder /path/t
 
 Supported output formats are `csv`, `pdf`, and `xlsx`; `pdf` is the default. The PDF contains a sorted, paginated table with song name and artist columns.
 
+## Data quality research
+
+Copy `env/.env.data_quality.example` to the ignored `env/.env.data_quality` file, then set `DATABASE_FOLDER` to the folder containing the Rekordbox XML exports. Open `research/20_rekordbox_data_quality_review.ipynb` from its `research/` directory and run its cells in order.
+
 ## Normalize audio research
 
-Audio normalization is currently explored only in `research/30_normalize_audio.ipynb`; there is no supported Python command or Finder launcher. Copy `env/.env.normalize_audio.example` to the ignored `env/.env.normalize_audio` file and configure it before opening the notebook. The notebook contains local-path experiments that select tracks marked as quiet, copy them to a staging folder, and normalize the staged files with [pydub](https://github.com/jiaaro/pydub).
+Copy `env/.env.normalize_audio.example` to the ignored `env/.env.normalize_audio` file and configure it before opening `research/30_normalize_audio.ipynb`.
 
 **Attention:** The experiment converts `.m4a` files to `.mp3`. A pre-existing MP3 with the same filename can be a different song, so replacement must be reviewed manually. After choosing the correct output file, update the corresponding Rekordbox XML `@Location` manually; Rekordbox cannot relocate files across formats.

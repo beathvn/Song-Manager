@@ -1,16 +1,18 @@
 # Song-Manager at a glance
 
-Song-Manager supports the following music-library workflows:
+Song-Manager supports the following music-library features:
 
-| Feature | Status |
-| --- | --- |
-| Discover and acquire tracks from Spotify | Operational |
-| Prepare the DJ library in Rekordbox | Manual |
-| Distribute the library across devices | Operational |
-| Refresh secondary-library metadata | Manual |
-| Migrate legacy Rekordbox XML | Manual / legacy |
-| Run health checks on the Rekordbox library | Partial — see individual checks below |
-| Normalize selected Rekordbox tracks | Experimental / research |
+| # | Feature | Status |
+| --- | --- | --- |
+| 1 | Discover and acquire tracks from Spotify | Operational |
+| 2 | Prepare the DJ library in Rekordbox | Manual |
+| 3 | Distribute the library across devices | Operational |
+| 4 | Refresh secondary-library metadata | Manual |
+| 5 | Migrate legacy Rekordbox XML | Manual / legacy |
+| 6 | Export a Rekordbox track list | Operational |
+| 7 | Review Rekordbox library data quality | Research only |
+| 8 | Normalize selected Rekordbox tracks | Experimental / research |
+| 9 | Analyze and curate the Rekordbox library | Research only |
 
 ## Core workflows
 
@@ -93,23 +95,34 @@ flowchart LR
 **Responsible service:** `rekordbox_migration`
 **Status:** Rekordbox 5 → 6 migration is legacy/manual.
 
-### 6. Run health checks on the Rekordbox library
+### 6. Export a Rekordbox track list
 
 ```mermaid
 flowchart LR
     XML[Rekordbox XML snapshot] --> TrackList[Export track title and artist list]
-    XML --> Duplicates[Check duplicate file locations]
 ```
 
-**Responsible service:** `rekordbox_maintenance`  
+**Responsible service:** `rekordbox_maintenance`
 
 | Name | State | Description |
 | --- | --- | --- |
 | Export track list | Operational | Exports a sorted title/artist list as CSV, PDF, or Excel. |
-| Check duplicate locations | Documented/research only | Checks duplicate `@Location` values in an XML export; the referenced `check_for_duplicates.py` is not currently in the service. |
+
+### 7. Review Rekordbox library data quality
+
+```mermaid
+flowchart LR
+    XML[Rekordbox XML snapshot] --> Duplicates[Check duplicate file locations]
+```
+
+**Responsible service:** `rekordbox_maintenance`
+
+| Name | State | Description |
+| --- | --- | --- |
+| Data quality checks | Research only | `research/20_rekordbox_data_quality_review.ipynb` currently checks duplicate `@Location` values in the latest Rekordbox 7 XML export. Future checks will cover metadata consistency, completeness, and validity. |
 | Correct primary-library DJ play counts | Planned | Will plan corrections from XML snapshots; no workflow or script exists yet. |
 
-### 7. Normalize selected Rekordbox tracks
+### 8. Normalize selected Rekordbox tracks
 
 ```mermaid
 flowchart LR
@@ -124,7 +137,21 @@ flowchart LR
 **Responsible service:** `rekordbox_maintenance`<br>
 **Status:** Experimental / research only.
 
-Statuses describe the current code paths, not automated test coverage; the repository does not yet have a dedicated test suite. Last reviewed: **2026-08-23**.
+### 9. Analyze and curate the Rekordbox library
+
+```mermaid
+flowchart LR
+    XML[Rekordbox XML snapshot] --> Analyze[Explore library distributions]
+    Analyze --> Review[Review collection patterns]
+    Review --> Curate[Manually refine metadata and collection]
+```
+
+`research/90_visu_rb6.ipynb` is the current starting point for exploratory library analysis. It currently visualizes the artists most represented in a Rekordbox XML export. This workflow will help identify meaningful patterns in the collection and guide manual curation decisions, such as refining genres, tags, ratings, or playlist placement. It is not a supported Python command or Finder launcher.
+
+**Responsible service:** `rekordbox_maintenance`<br>
+**Status:** Research only.
+
+Statuses describe the current code paths, not automated test coverage; the repository does not yet have a dedicated test suite. Last reviewed: **2026-08-28**.
 
 ## Detail when needed
 
